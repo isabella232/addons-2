@@ -1,9 +1,9 @@
 <style>body {background-color:#eee;}</style>
 Resources:
 <ul id="resources">
-  
+
 </ul>
-<script type="text/javascript" src="../lib/jquery.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
 <script>
 console.log(location)
 resources = {
@@ -15,10 +15,10 @@ resources = {
 }
 
 if(location.hash) {
-  query = decodeURI(location.hash).replace(/.*\] /,"")
+  query = decodeURI(location.hash).replace(/.*\] /,"").substring(1);
   for (var r in resources) {
-    $("#resources").append("<li><a target='lookup' href='"+resources[r]+query+"'>Look up on "+r+"</a>")
+    $("#resources").append("<li><a target='lookup' href='"+resources[r]+query+"'>Look up on "+r+"</a>");
   }
-  
+
 }
 </script>
