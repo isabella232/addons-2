@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>PagerDuty Tool</title>
+		<link href="bower_components/jquery-jsonview/dist/jquery.jsonview.css" rel="stylesheet">
+		<link href="bower_components/datatables/media/css/jquery.dataTables.css" rel="stylesheet">
+		<link href="bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+		<link href="bower_components/bootstrap/dist/css/bootstrap-theme.css" rel="stylesheet">
+		<link href="PDtool.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="container theme-showcase" role="main">
+		<div class="menu" id="menu">
+			<button class="btn btn-default" id="auth-button" value="auth">Authentication</button>
+			<button class="btn btn-default" id="integrations-button" value="integrations">View Integrations</button>
+			<button class="btn btn-default" id="trigger-button" value="trigger">Trigger Events</button>
+			<button class="btn btn-default" id="incidents-button" value="incidents">See Open Incidents</button>
+		</div>
+		<div class="detail" id="auth">
+			<table class="table">
+				<tr>
+					<td>Token:</td><td><input type="text" size="25" id="token"></td>
+				</tr>
+				<tr>
+					<td>PD user ID:</td><td><input type="text" size="25" id="userid"></td>
+				</tr>
+			</table>
+		</div>
+		<div class="detail" id="integrations">
+			Service: <select id="integrations-service-select"></select>
+			Integration: <select id="integrations-integration-select"></select>
+			<div class="result" id="integrations-result"></div>
+		</div>
+		<div class="detail" id="trigger">
+			Send a <select id="trigger-event-select"></select>
+			event to: <select id="trigger-dest-select"></select>
+			<button class="btn btn-default" id="trigger-send-button">Send</button>
+			<div class="result" id="trigger-result"></div>
+		</div>
+		<div class="detail" id="incidents">
+			<div class="result" id="incidents-result"></div>
+		</div>
+
+		<div class="busy">
+			<img class="spinner" src="spinner.gif">
+			<div class="progress" id="progressbar"></div>
+		</div>
+		</div>
+
+		<script src="bower_components/jquery/dist/jquery.min.js"></script>
+		<script src="bower_components/jquery-jsonview/dist/jquery.jsonview.js"></script>
+		<script src="bower_components/async/dist/async.js"></script>
+		<script src="bower_components/datatables/media/js/jquery.dataTables.js"></script>
+		<script src="bower_components/bootstrap/js/alert.js"></script>
+		<script src="PDtool-events.js"></script>
+		<script src="PDtool.js"></script>
+	</body>
+</html>

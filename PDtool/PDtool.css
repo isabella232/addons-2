@@ -1,0 +1,49 @@
+body {
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.detail {
+	display: none;
+	position: fixed;
+	overflow: scroll;
+	top: 60px;
+	right: auto;
+	bottom: 0;
+/* 	left: 0; */
+	padding: 10px 0px 10px 0px;
+/* 	top: 60px; right: 0; bottom: 0; left: 0; */
+}
+
+.menu {
+	position: fixed;
+	height: 60px;
+	padding: 10px 0px 10px 0px;
+}
+
+.busy {
+	display: none;
+	position: fixed;
+	background-color: #888;
+	opacity: 0.8;
+	top: 0; right: 0; bottom: 0; left: 0;
+	z-index: 10;
+}
+
+.busy .spinner {
+	width: 100px;
+	height: 100px;
+	opacity: 1.0;
+	top: 0; right: 0; bottom: 0; left: 0;
+	position: absolute;
+	margin: auto;
+}
+
+.busy .progress {
+	width: 100px;
+	height: 20px;
+	opacity: 1.0;
+	top: 0; right: 0; bottom: 0; left: 0;
+	position: absolute;
+	margin: auto;
+}
+
