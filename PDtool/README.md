@@ -6,3 +6,6 @@ This is a standalone tool that can view the raw JSON of integrations found in yo
 
 * index.html is standalone - enter a v2 API token and a valid PD user id on the Authentication tab and the rest of the tabs will start working.
 
+```
+https://pagerduty.github.io/addons/PDtool/index.html
+```
