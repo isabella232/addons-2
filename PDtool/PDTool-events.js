@@ -1,3 +1,5 @@
+// some pre-canned events; these show up in the event type menu in the Trigger tab.
+
 var PDtoolevents = {
 	"Website Sample": {    
 	  "event_type": "trigger",
