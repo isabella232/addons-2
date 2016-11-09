@@ -257,7 +257,7 @@ function main() {
 		$('#auth').show();
 		populateIncidentsResult();
 	});
-	
+
 	// send trigger button
 	$('#trigger-send-button').click(function() {
 		var eventData = $.extend(PDtoolevents[$('#trigger-event-select').val()], { "service_key": $('#trigger-dest-select').val() });
