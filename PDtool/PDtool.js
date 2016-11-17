@@ -210,10 +210,19 @@ function processUsers(tableData, data) {
 					break;
 			}
 		});
+		
+		var teams = [];
+		user.teams.forEach(function(team) {
+			teams.push(team.summary);
+		});
+		
 		tableData.push(
 			[
 				user.name,
 				user.email,
+				user.job_title,
+				user.role,
+				teams.join(),
 				methods.email.join(),
 				methods.phone.join(),
 				methods.sms.join()
@@ -242,6 +251,9 @@ function processUsers(tableData, data) {
 			columns: [
 				{ title: "User Name" },
 				{ title: "Login"},
+				{ title: "Title"},
+				{ title: "PD Role"},
+				{ title: "Teams"},
 				{ title: "Contact email" },
 				{ title: "Contact phone" },
 				{ title: "Contact sms" },

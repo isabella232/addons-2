@@ -11,14 +11,18 @@
 		<link href="PDtool.css" rel="stylesheet">
 	</head>
 	<body>
-		<div class="container-fluid" role="main">
-		<div class="menu" id="menu">
+<nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
 			<button class="btn btn-default" id="auth-button" value="auth">Authentication</button>
 			<button class="btn btn-default" id="integrations-button" value="integrations">View Integrations</button>
 			<button class="btn btn-default" id="trigger-button" value="trigger">Trigger Events</button>
 			<button class="btn btn-default" id="incidents-button" value="incidents">See Open Incidents</button>
 			<button class="btn btn-default" id="users-button" value="users">Export Users</button>
 		</div>
+      </div>
+</nav>
+<div class="container-fluid">
 		<div class="detail" id="auth">
 			<table class="table">
 				<tr>
