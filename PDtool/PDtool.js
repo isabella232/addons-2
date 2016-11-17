@@ -184,7 +184,7 @@ function populateIncidentsResult() {
 }
 
 function processUsers(tableData, data) {
-	console.log(data);
+// 	console.log(data);
 	
 	data.users.forEach(function(user) {
 		var methods = {
@@ -224,7 +224,8 @@ function processUsers(tableData, data) {
 		var offset = data.offset + data.limit;
 		
 		console.log("percent done: " + Math.round((data.offset / data.total) * 100));
-		$('#progressbar').progressbar({ value: Math.round((data.offset / data.total) * 100) });
+// 		$('#progressbar').progressbar({ value: Math.round((data.offset / data.total) * 100) });
+		
 		var options = {
 			data: {
 				"include[]": ["contact_methods"],
