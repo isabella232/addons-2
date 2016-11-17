@@ -64,7 +64,7 @@ function populateTriggerSelect(data) {
 		function(callback) {
 			data.services.forEach(function(service) {
 				service.integrations.forEach(function(integration) {
-					if ( integration.type == "generic_events_api_inbound_integration_reference" ) {
+					if ( integration.type.includes("api_inbound") || integration.type.includes("nagios_inbound") ) {
 						integrationIDs.push([service.id, integration.id]);
 					}
 				});
@@ -183,6 +183,96 @@ function populateIncidentsResult() {
 	PDRequest("incidents", "GET", options);
 }
 
+function processUsers(tableData, data) {
+	console.log(data);
+	
+	data.users.forEach(function(user) {
+		var methods = {
+			phone: [],
+			email: [],
+			sms: [],
+			push: []
+		}
+		
+		user.contact_methods.forEach(function(method) {
+			switch (method.type) {
+				case "email_contact_method":
+					methods.email.push(method.address);
+					break;
+				case "phone_contact_method":
+					methods.phone.push(method.address);
+					break;
+				case "push_notification_contact_method":
+					methods.push.push(method.address);
+					break;
+				case "sms_contact_method":
+					methods.sms.push(method.address);
+					break;
+			}
+		});
+		tableData.push(
+			[
+				user.name,
+				user.email,
+				methods.email.join(),
+				methods.phone.join(),
+				methods.sms.join()
+			]
+		);
+	});
+	if ( data.more == true ) {
+		var offset = data.offset + data.limit;
+		
+		console.log("percent done: " + Math.round((data.offset / data.total) * 100));
+		$('#progressbar').progressbar({ value: Math.round((data.offset / data.total) * 100) });
+		var options = {
+			data: {
+				"include[]": ["contact_methods"],
+				"offset": offset,
+				"total": "true"
+			},
+			success: function(data) { processUsers(tableData, data); }
+		}
+		
+		PDRequest("users", "GET", options);
+	} else {
+		$('#users-result-table').DataTable({
+			data: tableData,
+			columns: [
+				{ title: "User Name" },
+				{ title: "Login"},
+				{ title: "Contact email" },
+				{ title: "Contact phone" },
+				{ title: "Contact sms" },
+			],
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+		});
+		$('.busy').hide();
+	}
+}
+
+function populateUsersResult() {
+	$('.busy').show();
+	$('#users').html('');
+	$('#users').append($('<table/>', {
+		id: "users-result-table"
+	}));
+	
+	var tableData = [];
+	var options = {
+		data: {
+			"include[]": ["contact_methods"],
+			"total": "true"
+		},
+		success: function(data) { processUsers(tableData, data); }
+	}
+	
+	PDRequest("users", "GET", options);
+}
+
 function main() {
 
 	// prepopulate token field if it's been saved
@@ -257,10 +347,16 @@ function main() {
 		$('#auth').show();
 		populateIncidentsResult();
 	});
+	
+	$('#users-button').click(function() {		
+		$('.detail').hide();
+		$('#users').show();
+		populateUsersResult();
+	});
 
 	// send trigger button
 	$('#trigger-send-button').click(function() {
-		var eventData = $.extend(PDtoolevents[$('#trigger-event-select').val()], { "service_key": $('#trigger-dest-select').val() });
+		var eventData = $.extend(PDtoolevents[$('#trigger-event-select').val()].event, { "service_key": $('#trigger-dest-select').val() });
 		var options = {
 			success: function() {
 				$('#trigger-result').append($('#trigger-event-select').val() + " event sent to " + 

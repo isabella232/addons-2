@@ -2,18 +2,22 @@
 <html lang="en">
 	<head>
 		<title>PagerDuty Tool</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+		<link href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css" rel="stylesheet">
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+		<link href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
 		<link href="PDtool.css" rel="stylesheet">
 	</head>
 	<body>
-		<div class="container theme-showcase" role="main">
+		<div class="container-fluid" role="main">
 		<div class="menu" id="menu">
 			<button class="btn btn-default" id="auth-button" value="auth">Authentication</button>
 			<button class="btn btn-default" id="integrations-button" value="integrations">View Integrations</button>
 			<button class="btn btn-default" id="trigger-button" value="trigger">Trigger Events</button>
 			<button class="btn btn-default" id="incidents-button" value="incidents">See Open Incidents</button>
+			<button class="btn btn-default" id="users-button" value="users">Export Users</button>
 		</div>
 		<div class="detail" id="auth">
 			<table class="table">
@@ -39,6 +43,9 @@
 		<div class="detail" id="incidents">
 			<div class="result" id="incidents-result"></div>
 		</div>
+		<div class="detail" id="users">
+			<div class="result" id="users-result"></div>
+		</div>
 
 		<div class="busy">
 			<img class="spinner" src="spinner.gif">
@@ -46,10 +53,20 @@
 		</div>
 		</div>
 
+
 		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+		<script src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.1.2/async.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/js/jquery.dataTables.min.js"></script>
+		
+		<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+		<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+		<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+		<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+		<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
 		
 		<script src="PDtool-events.js"></script>
 		<script src="PDtool.js"></script>
