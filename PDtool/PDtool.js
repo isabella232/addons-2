@@ -186,8 +186,6 @@ function populateIncidentsResult() {
 }
 
 function processUsers(tableData, data) {
-// 	console.log(data);
-	
 	data.users.forEach(function(user) {
 		var methods = {
 			phone: [],
@@ -234,7 +232,6 @@ function processUsers(tableData, data) {
 	if ( data.more == true ) {
 		var offset = data.offset + data.limit;
 		var progress = Math.round((data.offset / data.total) * 100);
-		console.log(progress + " done");
 		$('#progressbar').attr("aria-valuenow", "" + progress);
 		$('#progressbar').attr("style", "width: " + progress + "%;");
 		$('#progressbar').html("" + progress + "%");
@@ -319,6 +316,7 @@ function main() {
 		populateIntegrationsResult();
 	});
 	
+	// active 'tab' highlight
 	$('.nav li').click(function() {
 		$('nav li').removeClass("active");
 		$(this).addClass("active");
