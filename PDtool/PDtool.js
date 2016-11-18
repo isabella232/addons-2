@@ -42,6 +42,7 @@ function populateIntegrationsMenu() {
 			text: integration.summary
 		}));
 	});
+	$('#integrations-integration-select').selectpicker('refresh');
 	populateIntegrationsResult();
 }
 
@@ -91,7 +92,8 @@ function populateTriggerSelect(data) {
 							value: result.integration.integration_key,
 							text: result.integration.service.summary + ": " + result.integration.name
 						}));
-					})
+					});
+					$('#trigger-dest-select').selectpicker('refresh');
 					$('.busy').hide();
 			});
 		}
@@ -231,9 +233,11 @@ function processUsers(tableData, data) {
 	});
 	if ( data.more == true ) {
 		var offset = data.offset + data.limit;
-		
-		console.log("percent done: " + Math.round((data.offset / data.total) * 100));
-// 		$('#progressbar').progressbar({ value: Math.round((data.offset / data.total) * 100) });
+		var progress = Math.round((data.offset / data.total) * 100);
+		console.log(progress + " done");
+		$('#progressbar').attr("aria-valuenow", "" + progress);
+		$('#progressbar').attr("style", "width: " + progress + "%;");
+		$('#progressbar').html("" + progress + "%");
 		
 		var options = {
 			data: {
@@ -264,6 +268,9 @@ function processUsers(tableData, data) {
 			]
 		});
 		$('.busy').hide();
+		$('#progressbar').attr("aria-valuenow", "0");
+		$('#progressbar').attr("style", "width: 0%;");
+		$('#progressbar').html("0%");
 	}
 }
 
@@ -300,6 +307,8 @@ function main() {
 		localStorage.setItem('userid', $('#userid').val());
 	});
 
+	$('.selectpicker').selectpicker();
+	
 	// when you change the service select, show the integrations for the selected service
 	$('#integrations-service-select').change(function() {
 		populateIntegrationsMenu();
@@ -309,6 +318,11 @@ function main() {
 	$('#integrations-integration-select').change(function() {
 		populateIntegrationsResult();
 	});
+	
+	$('.nav li').click(function() {
+		$('nav li').removeClass("active");
+		$(this).addClass("active");
+	})
 
 	//show integrations page
 	$('#integrations-button').click(function() {
@@ -326,6 +340,7 @@ function main() {
 						text: service.name
 					}));
 				});
+				$('#integrations-service-select').selectpicker('refresh');
 				populateIntegrationsMenu();
 				populateIntegrationsResult();
 			}
@@ -389,6 +404,7 @@ function main() {
 			text: event
 		}));
 	});
+	$('#trigger-event-select').selectpicker('refresh');
 }
 
 $(document).ready(main);

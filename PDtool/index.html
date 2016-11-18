@@ -1,28 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>PagerDuty Tool</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
 		<link href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css" rel="stylesheet">
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 		<link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/css/bootstrap-select.min.css" rel="stylesheet">
 		<link href="PDtool.css" rel="stylesheet">
 	</head>
 	<body>
-<nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
-        <div class="navbar-header">
-			<button class="btn btn-default" id="auth-button" value="auth">Authentication</button>
-			<button class="btn btn-default" id="integrations-button" value="integrations">View Integrations</button>
-			<button class="btn btn-default" id="trigger-button" value="trigger">Trigger Events</button>
-			<button class="btn btn-default" id="incidents-button" value="incidents">See Open Incidents</button>
-			<button class="btn btn-default" id="users-button" value="users">Export Users</button>
-		</div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a id="auth-button" href="#">Authentication</a></li>
+            <li><a id="integrations-button" href="#">View Integrations</a></li>
+            <li><a id="trigger-button" href="#">Send events</a></li>
+            <li><a id="incidents-button" href="#">See Open Incidents</a></li>
+            <li><a id="users-button" href="#">Export Users</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+          </ul>
+        </div><!--/.nav-collapse -->
       </div>
-</nav>
-<div class="container-fluid">
+    </nav>
+<!--
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button class="btn btn-default" id="auth-button" value="auth">Authentication</button>
+				<button class="btn btn-default" id="integrations-button" value="integrations">View Integrations</button>
+				<button class="btn btn-default" id="trigger-button" value="trigger">Trigger Events</button>
+				<button class="btn btn-default" id="incidents-button" value="incidents">See Open Incidents</button>
+				<button class="btn btn-default" id="users-button" value="users">Export Users</button>
+			</div>
+	      </div>
+	</nav>
+-->
+	<div class="container-fluid">
 		<div class="detail" id="auth">
 			<table class="table">
 				<tr>
@@ -34,13 +54,13 @@
 			</table>
 		</div>
 		<div class="detail" id="integrations">
-			Service: <select id="integrations-service-select"></select>
-			Integration: <select id="integrations-integration-select"></select>
+			Service: <select class="selectpicker" id="integrations-service-select"></select>
+			Integration: <select class="selectpicker" id="integrations-integration-select"></select>
 			<div class="result" id="integrations-result"></div>
 		</div>
 		<div class="detail" id="trigger">
-			Send a <select id="trigger-event-select"></select>
-			event to: <select id="trigger-dest-select"></select>
+			Send a <select class="selectpicker" id="trigger-event-select"></select>
+			event to: <select class="selectpicker" id="trigger-dest-select"></select>
 			<button class="btn btn-default" id="trigger-send-button">Send</button>
 			<div class="result" id="trigger-result"></div>
 		</div>
@@ -51,18 +71,24 @@
 			<div class="result" id="users-result"></div>
 		</div>
 
-		<div class="busy">
-			<img class="spinner" src="spinner.gif">
-<!-- 			<div class="progress" id="progressbar"></div> -->
+	</div>
+	<div class="busy">
+		<img class="spinner" src="spinner.gif">
+		<div class="progress">
+			<div id="progressbar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+				0%
+			</div>
 		</div>
-		</div>
+	</div>
 
 
 		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 		<script src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/async/2.1.2/async.min.js"></script>
-		
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" 
+				integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.11.2/js/bootstrap-select.min.js"></script>
 		<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 		<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
 		<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
