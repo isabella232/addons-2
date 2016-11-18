@@ -1,5 +1,12 @@
 var services;
 
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 function PDRequest(endpoint, method, options) {
 
 	var token = localStorage.getItem("token");
@@ -303,6 +310,16 @@ function main() {
 	$('#userid').change(function() {
 		localStorage.setItem('userid', $('#userid').val());
 	});
+	
+	if ( getParameterByName("token") ) {
+		$("#token").val(getParameterByName("token"));
+		localStorage.setItem('token', $('#token').val());
+	}
+
+	if ( getParameterByName("userid") ) {
+		$("#userid").val(getParameterByName("userid"));
+		localStorage.setItem('userid', $('#userid').val());
+	}
 
 	$('.selectpicker').selectpicker();
 	
