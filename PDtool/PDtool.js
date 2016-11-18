@@ -9,7 +9,8 @@ function getParameterByName(name) {
 
 function PDRequest(endpoint, method, options) {
 
-	var token = localStorage.getItem("token");
+// 	var token = localStorage.getItem("token");
+	var token = $('#token').val();
 
 	var merged = $.extend(true, {}, {
 		type: method,
@@ -31,7 +32,10 @@ function PDRequest(endpoint, method, options) {
 
 function PDEvent(options) {
 	
-	var token = localStorage.getItem("token");
+// 	var token = localStorage.getItem("token");
+
+	var token = $('#token').val();
+
 	$.ajax($.extend({}, {
 		type: "POST",
 		dataType: "json",
@@ -123,7 +127,8 @@ function populateIncidentsResult() {
 			};
 
 		var options = {
-			headers: { "From": localStorage.getItem("userid") },
+//			headers: { "From": localStorage.getItem("userid") },
+			headers: { "From": $('#userid').val() },
 			data: requestData,
 			success: function(data) {
 				populateIncidentsResult();
@@ -143,7 +148,8 @@ function populateIncidentsResult() {
 			};
 
 		var options = {
-			headers: { "From": localStorage.getItem("userid") },
+// 			headers: { "From": localStorage.getItem("userid") },
+			headers: { "From": $('#userid').val() },
 			data: requestData,
 			success: function(data) {
 				populateIncidentsResult();
@@ -313,12 +319,10 @@ function main() {
 	
 	if ( getParameterByName("token") ) {
 		$("#token").val(getParameterByName("token"));
-		localStorage.setItem('token', $('#token').val());
 	}
 
 	if ( getParameterByName("userid") ) {
 		$("#userid").val(getParameterByName("userid"));
-		localStorage.setItem('userid', $('#userid').val());
 	}
 
 	$('.selectpicker').selectpicker();
