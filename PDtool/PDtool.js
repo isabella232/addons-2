@@ -9,7 +9,6 @@ function getParameterByName(name) {
 
 function PDRequest(endpoint, method, options) {
 
-// 	var token = localStorage.getItem("token");
 	var token = $('#token').val();
 
 	var merged = $.extend(true, {}, {
@@ -32,8 +31,6 @@ function PDRequest(endpoint, method, options) {
 
 function PDEvent(options) {
 	
-// 	var token = localStorage.getItem("token");
-
 	var token = $('#token').val();
 
 	$.ajax($.extend({}, {
@@ -127,7 +124,6 @@ function populateIncidentsResult() {
 			};
 
 		var options = {
-//			headers: { "From": localStorage.getItem("userid") },
 			headers: { "From": $('#userid').val() },
 			data: requestData,
 			success: function(data) {
@@ -148,7 +144,6 @@ function populateIncidentsResult() {
 			};
 
 		var options = {
-// 			headers: { "From": localStorage.getItem("userid") },
 			headers: { "From": $('#userid').val() },
 			data: requestData,
 			success: function(data) {
@@ -303,6 +298,75 @@ function populateUsersResult() {
 	PDRequest("users", "GET", options);
 }
 
+function processAddons(tableData, data) {
+	data.addons.forEach(function(addon) {
+		var actionButtons = '<button class="btn btn-sm delete-button" id="' + addon.id + '">Delete</button>';
+		
+		var desc = addon.summary;
+		if ( addon.html_url ) {
+			desc = '<a href="' + addon.html_url + '" target="blank">' + desc + '</a>'
+		}
+
+		tableData.push([
+			desc,
+			addon.type,
+			addon.src,
+			actionButtons
+		]);
+	});
+	
+	if (data.more == true) {
+		var offset = data.offset + data.limit;
+		var options = {
+			data: {
+				"offset": offset,
+				"total": "true"
+			},
+			success: function(data) { processAddons(tableData, data); }
+		}
+		
+		PDRequest("addons", "GET", options);
+	} else {
+		$('#addons-result-table').DataTable({
+			data: tableData,
+			columns: [
+				{ title: "Description" },
+				{ title: "Type"},
+				{ title: "URL"},
+				{ titls: "Actions"}
+			]
+		});
+		$('.busy').hide();		
+		$('#addons-result-table').on('click', 'td button.delete-button', function() {
+			var addonID = $(this).attr('id');
+	
+			var options = {
+				success: function(data) {
+					populateAddonsResult();
+				}
+			}
+			PDRequest("addons/" + addonID, "DELETE", options);
+		});
+	}
+}
+
+function populateAddonsResult() {
+	$('.busy').show();
+	$('#addons-result').html('');
+	$('#addons-result').append($('<table/>', {
+		id: "addons-result-table"
+	}));
+	
+	var tableData = [];
+	var options = {
+		success: function(data) { processAddons(tableData, data) },
+		total: true
+	}
+	
+	PDRequest("addons", "GET", options);
+}
+
+
 function main() {
 
 	// prepopulate token field if it's been saved
@@ -399,6 +463,29 @@ function main() {
 		$('.detail').hide();
 		$('#users').show();
 		populateUsersResult();
+	});
+	
+	$('#addons-button').click(function() {
+		$('.detail').hide();
+		$('#addons').show();
+		populateAddonsResult();
+	});
+	
+	$('#addons-install-button').click(function() {
+		var options = {
+			data: {
+				addon: {
+					name: $('#addons-name').val(),
+					type: $('#addons-type').val(),
+					src: $('#addons-url').val()				
+				}
+			},
+			success: function() {
+				populateAddonsResult();
+			}
+		}
+		
+		PDRequest("addons", "POST", options);
 	});
 
 	// send trigger button
