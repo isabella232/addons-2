@@ -12,3 +12,17 @@ https://pagerduty.github.io/addons/PDtool/index.html
 ```
 https://pagerduty.github.io/addons/PDtool/index.html?token=<TOKEN>&userid=<USERID>
 ```
+* you can also pass a features= parameter to specify which tabs to turn on or off, using a concatenation of the following:
+```
+a: Authentication
+i: Integrations
+t: Trigger Events
+n: Manage Incidents
+u: Export Users
+d: Manage Add-Ons
+```
+for example, to specify only incidents, users and add-ons tab:
+```
+https://pagerduty.github.io/addons/PDtool/index.html?token=<TOKEN>&userid=<USERID>&features=nud
+```
+if you don't specify features, all tabs will be visible.

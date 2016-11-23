@@ -7,6 +7,32 @@ function getParameterByName(name) {
     return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+
+function toggleFeatures(featuresStr) {
+	var features = featuresStr.toLowerCase();
+	
+	$('.nav li a').hide();
+	
+	if ( features.indexOf('a') > -1 ) {
+		$('#auth-button').show();
+	}
+	if ( features.indexOf('i') > -1 ) {
+		$('#integrations-button').show();
+	}
+	if ( features.indexOf('t') > -1 ) {
+		$('#trigger-button').show();
+	}
+	if ( features.indexOf('n') > -1 ) {
+		$('#incidents-button').show();
+	}
+	if ( features.indexOf('u') > -1 ) {
+		$('#users-button').show();
+	}
+	if ( features.indexOf('d') > -1 ) {
+		$('#addons-button').show();
+	}
+}
+
 function PDRequest(endpoint, method, options) {
 
 	var token = $('#token').val();
@@ -387,6 +413,10 @@ function main() {
 
 	if ( getParameterByName("userid") ) {
 		$("#userid").val(getParameterByName("userid"));
+	}
+	
+	if ( getParameterByName("features") ) {
+		toggleFeatures(getParameterByName("features"));
 	}
 
 	$('.selectpicker').selectpicker();
