@@ -307,8 +307,8 @@ function processUsers(tableData, data) {
 
 function populateUsersResult() {
 	$('.busy').show();
-	$('#users').html('');
-	$('#users').append($('<table/>', {
+	$('#users-result').html('');
+	$('#users-result').append($('<table/>', {
 		id: "users-result-table"
 	}));
 	
@@ -325,8 +325,10 @@ function populateUsersResult() {
 }
 
 function processAddons(tableData, data) {
+
 	data.addons.forEach(function(addon) {
 		var actionButtons = '<button class="btn btn-sm delete-button" id="' + addon.id + '">Delete</button>';
+		
 		
 		var desc = addon.summary;
 		if ( addon.html_url ) {
@@ -350,7 +352,6 @@ function processAddons(tableData, data) {
 			},
 			success: function(data) { processAddons(tableData, data); }
 		}
-		
 		PDRequest("addons", "GET", options);
 	} else {
 		$('#addons-result-table').DataTable({
@@ -501,17 +502,23 @@ function main() {
 		populateAddonsResult();
 	});
 	
+	$('#addons-add-button').click(function() {
+		$('.detail').hide();
+		$('#addons-add').show();
+	});
+	
 	$('#addons-install-button').click(function() {
 		var options = {
 			data: {
 				addon: {
 					name: $('#addons-name').val(),
 					type: $('#addons-type').val(),
-					src: $('#addons-url').val()				
+					src: $('#addons-url').val()
 				}
 			},
 			success: function() {
-				populateAddonsResult();
+//				populateAddonsResult();
+				$('#addons-add-result').append('Installed addon "' + $('#addons-name').val() + '" (' + $('#addons-url').val() + ')');
 			}
 		}
 		
