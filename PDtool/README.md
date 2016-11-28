@@ -1,10 +1,10 @@
 # PDtool
 
-This is a standalone tool that can view the raw JSON of integrations found in your account, trigger some pre-canned events, and view/ack/resolve open incidents.
+This is a standalone tool, suitable for use as a PD add-on, that can view the raw JSON of integrations found in your account, trigger some pre-canned events, view/ack/resolve open incidents, view/export users, and view/add/delete add-ons.
 
 ## How to use
 
-* index.html is standalone - enter a v2 API token and a valid PagedDuty login ID (an email address) on the Authentication tab and the rest of the tabs will start working.
+* index.html is standalone - enter a v2 API token and a valid PagerDuty login ID (an email address) on the Authentication tab and the rest of the tabs will start working.
 ```
 https://pagerduty.github.io/addons/PDtool/index.html
 ```
