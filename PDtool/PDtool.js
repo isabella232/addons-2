@@ -11,7 +11,7 @@ function getParameterByName(name) {
 function toggleFeatures(featuresStr) {
 	var features = featuresStr.toLowerCase();
 	
-	$('.nav li a').hide();
+	$('.nav .tab').hide();
 	
 	if ( features.indexOf('a') > -1 ) {
 		$('#auth-button').show();
@@ -496,7 +496,7 @@ function main() {
 		populateUsersResult();
 	});
 	
-	$('#addons-button').click(function() {
+	$('#addons-view-button').click(function() {
 		$('.detail').hide();
 		$('#addons').show();
 		populateAddonsResult();
