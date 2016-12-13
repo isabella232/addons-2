@@ -99,7 +99,7 @@ function populateTriggerSelect(data) {
 		function(callback) {
 			data.services.forEach(function(service) {
 				service.integrations.forEach(function(integration) {
-					if ( integration.type.includes("api_inbound") || integration.type.includes("nagios_inbound") ) {
+					if ( integration.type.includes("generic_events_api_inbound") || integration.type.includes("nagios_inbound") ) {
 						integrationIDs.push([service.id, integration.id]);
 					}
 				});
@@ -517,7 +517,6 @@ function main() {
 				}
 			},
 			success: function() {
-//				populateAddonsResult();
 				$('#addons-add-result').append('Installed addon "' + $('#addons-name').val() + '" (' + $('#addons-url').val() + ')');
 			}
 		}
