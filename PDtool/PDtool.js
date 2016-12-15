@@ -1,4 +1,4 @@
-var services;
+var services, users;
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -26,10 +26,10 @@ function toggleFeatures(featuresStr) {
 		$('#incidents-button').show();
 	}
 	if ( features.indexOf('u') > -1 ) {
-		$('#users-button').show();
+		$('#users-dropdown').show();
 	}
 	if ( features.indexOf('d') > -1 ) {
-		$('#addons-button').show();
+		$('#addons-dropdown').show();
 	}
 }
 
@@ -281,7 +281,7 @@ function processUsers(tableData, data) {
 		
 		PDRequest("users", "GET", options);
 	} else {
-		$('#users-result-table').DataTable({
+		$('#users-export-result-table').DataTable({
 			data: tableData,
 			columns: [
 				{ title: "User Name" },
@@ -307,9 +307,9 @@ function processUsers(tableData, data) {
 
 function populateUsersResult() {
 	$('.busy').show();
-	$('#users-result').html('');
-	$('#users-result').append($('<table/>', {
-		id: "users-result-table"
+	$('#users-export-result').html('');
+	$('#users-export-result').append($('<table/>', {
+		id: "users-export-result-table"
 	}));
 	
 	var tableData = [];
@@ -393,6 +393,33 @@ function populateAddonsResult() {
 	PDRequest("addons", "GET", options);
 }
 
+function addUsers() {
+	$('.busy').show();
+	var outstanding = 0;
+	users.forEach(function(user) {
+		outstanding++;
+		var dataObj = $.extend(true, { type: "user" }, user);
+
+		for ( var key in dataObj ) {
+			if ( dataObj[key] === null || dataObj[key] === undefined || dataObj[key] === "" ) {
+				delete dataObj[key];
+			}
+		}
+
+		var options = {
+			data: {
+				user: dataObj
+			},
+			success: function(data) {
+				outstanding--;
+				if (outstanding == 0) {
+					$('.busy').hide();
+				}
+			}
+		}
+		PDRequest("users", "POST", options);
+	});
+}
 
 function main() {
 
@@ -489,13 +516,18 @@ function main() {
 		$('#auth').show();
 		populateIncidentsResult();
 	});
-	
-	$('#users-button').click(function() {		
+
+	$('#users-export-button').click(function() {		
 		$('.detail').hide();
-		$('#users').show();
+		$('#users-export').show();
 		populateUsersResult();
 	});
 	
+	$('#users-import-button').click(function() {		
+		$('.detail').hide();
+		$('#users-import').show();
+	});
+
 	$('#addons-view-button').click(function() {
 		$('.detail').hide();
 		$('#addons').show();
@@ -505,6 +537,48 @@ function main() {
 	$('#addons-add-button').click(function() {
 		$('.detail').hide();
 		$('#addons-add').show();
+	});
+	
+	$('#csv-file-input').on('change', function(){
+		Papa.parse(this.files[0], {
+			header: true,
+			complete: function(results) {
+				users = [];
+				var emailregex = '^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$';
+				results.data.forEach(function(user) {
+					if ( ! user.hasOwnProperty('email') || user.email == "" || ! user.email.match(emailregex) ) {
+						return;
+					}
+					if ( ! user.hasOwnProperty('name') || user.name == "" ) {
+						return;
+					}
+					if ( ! user.hasOwnProperty('role') || user.role == "" ) {
+						user.role = "user";
+					}
+					users.push(user);
+				});
+				$('#users-import-result').append($('<table/>', {
+					id: "users-import-result-table"
+				}));
+				$('#users-import-result-table').DataTable({
+					data: users,
+					columns: [
+						{ data: 'name', title: 'Name' },
+						{ data: 'email', title: 'Login/Email' },
+						{ data: 'time_zone', title: 'Time Zone' },
+						{ data: 'color', title: 'Color' },
+						{ data: 'role', title: 'PD Role' },
+						{ data: 'job_title', title: 'Job Title' },
+						{ data: 'avatar_url', title: 'Avatar URL' },
+						{ data: 'description', title: 'Description' },
+					]
+				});
+				$('#users-import-result').append('<button type="button" id="users-import-submit" class="btn btn-primary">Add ' + users.length + ' users</button>');
+				$('#users-import-submit').click(function() {
+					addUsers();
+				});
+			}
+		});
 	});
 	
 	$('#addons-install-button').click(function() {
@@ -547,6 +621,7 @@ function main() {
 		}));
 	});
 	$('#trigger-event-select').selectpicker('refresh');
+	
 }
 
 $(document).ready(main);

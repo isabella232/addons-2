@@ -32,10 +32,21 @@
 	            <li><a class="tab" id="integrations-button" href="#">View Integrations</a></li>
 	            <li><a class="tab" id="trigger-button" href="#">Send Events</a></li>
 	            <li><a class="tab" id="incidents-button" href="#">See Open Incidents</a></li>
-	            <li><a class="tab" id="users-button" href="#">Export Users</a></li>
 	            <li role="presentation" class="dropdown">
-	            	<a class="tab" id="addons-button" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="addons-dropdown" href="#">Add-Ons 
-		            	<span class="caret"></span></a>
+	            	<a class="tab" class="dropdown-toggle" data-toggle="dropdown" 
+		            	aria-haspopup="true" aria-expanded="false" id="users-dropdown" href="#">Users
+		            	<span class="caret"></span>
+		            </a>
+	            	<ul class="dropdown-menu">
+		            	<li><a id="users-export-button" href="#">Export Users</a></li>
+		            	<li><a id="users-import-button" href="#">Import Users</a></li>
+	            	</ul>
+	            </li>
+	            <li role="presentation" class="dropdown">
+	            	<a class="tab" class="dropdown-toggle" data-toggle="dropdown" 
+		            	aria-haspopup="true" aria-expanded="false" id="addons-dropdown" href="#">Add-Ons 
+		            	<span class="caret"></span>
+		            </a>
 	            	<ul class="dropdown-menu">
 		            	<li><a id="addons-view-button" href="#">View Addons</a></li>
 		            	<li><a id="addons-add-button" href="#">Install Addons</a></li>
@@ -77,9 +88,15 @@
 				<h2>Open Incidents</h2>
 				<div class="result" id="incidents-result"></div>
 			</div>
-			<div class="detail" id="users">
+			<div class="detail" id="users-export">
 				<h2>Export Users</h2>
-				<div class="result" id="users-result"></div>
+				<div class="result" id="users-export-result"></div>
+			</div>
+			<div class="detail" id="users-import">
+				<h2>Import Users</h2>
+					<h4>Choose a CSV file to import: <input type="file" id="csv-file-input" style="display: inline;" accept="text/csv"></h4>
+					Required column headers: <b>name, email</b>; optional column headers: <b>time_zone, color, role, job_title, avatar_url, description</b><br>
+				<div class="result" id="users-import-result"></div>
 			</div>
 			<div class="detail" id="addons">
 				<h2>View Addons</h2>
@@ -138,6 +155,7 @@
 		<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
 		<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
 		<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+		<script src="https://raw.githubusercontent.com/mholt/PapaParse/master/papaparse.js"></script>
 		
 		<script src="PDtool-events.js"></script>
 		<script src="PDtool.js"></script>
