@@ -68,6 +68,43 @@ function PDEvent(options) {
 
 }
 
+function ackOrResolveIncidents(ackOrResolve, ids) {
+	if ( ids.length < 1 ) return;
+	$('.busy').show();
+	var outstanding = 0;
+	ids.forEach(function(id) {
+		outstanding++;
+
+		var requestData = {
+				incident: {
+					type: "incident",
+					status: ackOrResolve,
+					resolution: "PDtool"					}
+			};
+
+		var options = {
+			headers: { "From": $('#userid').val() },
+			data: requestData,
+			success: function(data) {
+				outstanding--;
+				if (outstanding == 0) {
+					$('.busy').hide();
+					populateIncidentsResult();
+				}
+			}
+		}
+		PDRequest("incidents/" + id, "PUT", options);
+	});
+}
+
+function acknowledgeIncidents(ids) {
+	ackOrResolveIncidents("acknowledged", ids);
+}
+
+function resolveIncidents(ids) {
+	ackOrResolveIncidents("resolved", ids);
+}
+
 function populateIntegrationsMenu() {
 	$('#integrations-integration-select').html('');
 	services[$('#integrations-service-select').val()].integrations.forEach(function(integration) {
@@ -201,6 +238,31 @@ function populateIncidentsResult() {
 				);
 			});
 			$('#incidents-result-table').DataTable({
+				select: true,
+				dom: 'Btftip',
+				buttons: [
+					{
+						text: 'Acknowledge Selected',
+						action: function(e, dt, node, config) {
+							var ids = [];
+							$('#incidents-result-table tr.selected button.ack-button').each(function() {
+								ids.push($(this).attr("id"));
+							});
+							acknowledgeIncidents(ids);
+						}
+					},
+					{
+						text: 'Resolve Selected',
+						action: function(e, dt, node, config) {
+							var ids = [];
+							$('#incidents-result-table tr.selected button.resolve-button').each(function() {
+								ids.push($(this).attr("id"));
+							});
+							resolveIncidents(ids);
+						}
+					},
+					
+				],
 				data: tableData,
 				columns: [
 					{ title: "#" },
