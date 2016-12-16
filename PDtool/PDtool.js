@@ -386,6 +386,147 @@ function populateUsersResult() {
 	PDRequest("users", "GET", options);
 }
 
+
+function processUsersEdit(tableData, data) {
+	data.users.forEach(function(user) {
+		var methods = {
+			phone: [],
+			email: [],
+			sms: [],
+			push: []
+		}
+		
+		user.contact_methods.forEach(function(method) {
+			switch (method.type) {
+				case "email_contact_method":
+					methods.email.push(method.address);
+					break;
+				case "phone_contact_method":
+					methods.phone.push(method.address);
+					break;
+				case "push_notification_contact_method":
+					methods.push.push(method.address);
+					break;
+				case "sms_contact_method":
+					methods.sms.push(method.address);
+					break;
+			}
+		});
+		
+		var teams = [];
+		user.teams.forEach(function(team) {
+			teams.push(team.summary);
+		});
+		
+		tableData.push(
+			[
+				user.id,
+				user.name,
+				user.email,
+				user.job_title,
+				user.role,
+				user.time_zone,
+				user.color,
+				user.description
+			]
+		);
+	});
+	if ( data.more == true ) {
+		var offset = data.offset + data.limit;
+		var progress = Math.round((data.offset / data.total) * 100);
+		$('#progressbar').attr("aria-valuenow", "" + progress);
+		$('#progressbar').attr("style", "width: " + progress + "%;");
+		$('#progressbar').html("" + progress + "%");
+		
+		var options = {
+			data: {
+				"include[]": ["contact_methods"],
+				"offset": offset,
+				"total": "true"
+			},
+			success: function(data) { processUsers(tableData, data); }
+		}
+		
+		PDRequest("users", "GET", options);
+	} else {
+		$('#users-edit-result-table').DataTable({
+			data: tableData,
+			columns: [
+				{ title: "ID" },
+				{ title: "User Name" },
+				{ title: "Login"},
+				{ title: "Title"},
+				{ title: "PD Role"},
+				{ title: "Time Zone"},
+				{ title: "Color" },
+				{ title: "Description" }
+			]
+		});
+		$('#users-edit-result-table').Tabledit({
+		    url: '',
+		    onAlways: function(action, serialize) {
+			    var pairs = serialize.split('&');
+			    var id = pairs[0].split('=')[1];
+			    var field = pairs[1].split('=')[0];
+			    var value = decodeURIComponent(pairs[1].split('=')[1]);
+			    modifyUser(id, field, value);
+		    },
+		    editButton: false,
+		    deleteButton: false,
+		    hideIdentifier: true,
+		    columns: {
+		        identifier: [0, 'id'],
+		        editable: [[1, 'name'], [2, 'email'], [3, 'job_title'], [4, 'role'], [5, 'time_zone'], [6, 'color'], [7, 'description']]
+		    }
+		});
+		$('.busy').hide();
+		$('#progressbar').attr("aria-valuenow", "0");
+		$('#progressbar').attr("style", "width: 0%;");
+		$('#progressbar').html("0%");
+	}
+}
+
+function modifyUser(id, field, value) {
+	var options = {
+		data: {
+			user: {
+			}
+		},
+		success: function(data) {
+			console.log(data);
+		},
+		error: function(data) {
+			console.log(data);
+			alert("Failed to edit " + field + ": " + data.responseJSON.error.message + "\n\n" + data.responseJSON.error.errors.join("\n"));
+			populateUsersEdit();
+		}
+	}
+	options.data.user[field] = value;
+	
+	PDRequest("/users/" + id, "PUT", options);
+	
+}
+
+
+function populateUsersEdit() {
+	$('.busy').show();
+	$('#users-edit-result').html('');
+	$('#users-edit-result').append($('<table/>', {
+		id: "users-edit-result-table"
+	}));
+	
+	var tableData = [];
+	var options = {
+		data: {
+			"include[]": ["contact_methods"],
+			"total": "true"
+		},
+		success: function(data) { processUsersEdit(tableData, data); }
+	}
+	
+	PDRequest("users", "GET", options);
+}
+
 function processAddons(tableData, data) {
 
 	data.addons.forEach(function(addon) {
@@ -588,6 +729,12 @@ function main() {
 	$('#users-import-button').click(function() {		
 		$('.detail').hide();
 		$('#users-import').show();
+	});
+
+	$('#users-edit-button').click(function() {		
+		$('.detail').hide();
+		$('#users-edit').show();
+		populateUsersEdit();
 	});
 
 	$('#addons-view-button').click(function() {
