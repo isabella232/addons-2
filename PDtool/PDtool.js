@@ -820,6 +820,14 @@ function main() {
 		PDEvent(options);
 	});
 	
+	$('.navbar-brand').click(function() {
+		if ( $(this).html() == '📟💩🔧') {
+			$(this).html('PD Tool');
+		} else {
+			$(this).html('📟💩🔧');
+		}
+	});
+	
 	// put pre-canned events into the select in the trigger page
 	var keys = Object.keys(PDtoolevents);
 	keys.sort();
