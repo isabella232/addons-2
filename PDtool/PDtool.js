@@ -176,7 +176,7 @@ function populateIncidentsResult() {
 	$('#incidents-result').append($('<table/>', {
 		id: "incidents-result-table"
 	}));
-	
+
 	$('#incidents-result-table').on('click', 'td button.resolve-button', function() {
 		var incidentID = $(this).attr('id');
 		var requestData = {
@@ -492,11 +492,7 @@ function modifyUser(id, field, value) {
 			user: {
 			}
 		},
-		success: function(data) {
-			console.log(data);
-		},
 		error: function(data) {
-			console.log(data);
 			alert("Failed to edit " + field + ": " + data.responseJSON.error.message + "\n\n" + data.responseJSON.error.errors.join("\n"));
 			populateUsersEdit();
 		}
@@ -717,7 +713,6 @@ function main() {
 	$('#auth-button').click(function() {
 		$('.detail').hide();
 		$('#auth').show();
-		populateIncidentsResult();
 	});
 
 	$('#users-export-button').click(function() {		
