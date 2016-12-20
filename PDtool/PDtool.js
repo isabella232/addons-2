@@ -47,7 +47,6 @@ function PDRequest(endpoint, method, options) {
 		},
 		error: function(err) {
 			$('.busy').hide();
-			console.log(err);
 			var alertStr = "Error '" + err.status + " - " + err.statusText + "' while attempting " + method + " request to '" + endpoint + "'";
 			try {
 				alertStr += ": " + err.responseJSON.error.message;
@@ -456,7 +455,7 @@ function processUsersEdit(tableData, data) {
 				"offset": offset,
 				"total": "true"
 			},
-			success: function(data) { processUsers(tableData, data); }
+			success: function(data) { processUsersEdit(tableData, data); }
 		}
 		
 		PDRequest("users", "GET", options);
@@ -472,24 +471,26 @@ function processUsersEdit(tableData, data) {
 				{ title: "Time Zone"},
 				{ title: "Color" },
 				{ title: "Description" }
-			]
-		});
-		$('#users-edit-result-table').Tabledit({
-		    url: '',
-		    onAlways: function(action, serialize) {
-			    var pairs = serialize.split('&');
-			    var id = pairs[0].split('=')[1];
-			    var field = pairs[1].split('=')[0];
-			    var value = decodeURIComponent(pairs[1].split('=')[1]);
-			    modifyUser(id, field, value);
-		    },
-		    editButton: false,
-		    deleteButton: false,
-		    hideIdentifier: true,
-		    columns: {
-		        identifier: [0, 'id'],
-		        editable: [[1, 'name'], [2, 'email'], [3, 'job_title'], [4, 'role'], [5, 'time_zone'], [6, 'color'], [7, 'description']]
-		    }
+			],
+			fnDrawCallback: function() {
+				$('#users-edit-result-table').Tabledit({
+				    url: '',
+				    onAlways: function(action, serialize) {
+					    var pairs = serialize.split('&');
+					    var id = pairs[0].split('=')[1];
+					    var field = pairs[1].split('=')[0];
+					    var value = decodeURIComponent(pairs[1].split('=')[1]);
+					    modifyUser(id, field, value);
+				    },
+				    editButton: false,
+				    deleteButton: false,
+				    hideIdentifier: true,
+				    columns: {
+				        identifier: [0, 'id'],
+				        editable: [[1, 'name'], [2, 'email'], [3, 'job_title'], [4, 'role'], [5, 'time_zone'], [6, 'color'], [7, 'description']]
+				    }
+				});
+    		}
 		});
 		$('.busy').hide();
 		$('#progressbar').attr("aria-valuenow", "0");
