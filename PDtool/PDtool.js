@@ -47,7 +47,19 @@ function PDRequest(endpoint, method, options) {
 		},
 		error: function(err) {
 			$('.busy').hide();
-			alert('Error ' + err.status + ': ' + err.statusText + ' - please check the values in the Authentication tab.');
+			console.log(err);
+			var alertStr = "Error '" + err.status + " - " + err.statusText + "' while attempting " + method + " request to '" + endpoint + "'";
+			try {
+				alertStr += ": " + err.responseJSON.error.message;
+			} catch (e) {
+				alertStr += ".";
+			}
+			
+			try {
+				alertStr += "\n\n" + err.responseJSON.error.errors.join("\n");
+			} catch (e) {}
+
+			alert(alertStr);
 		}
 	},
 	options);
@@ -695,6 +707,18 @@ function main() {
 		$('#trigger').show();
 		$('.busy').show();
 		$('#trigger-dest-select').html('');
+
+		// put pre-canned events into the select in the trigger page
+		var keys = Object.keys(PDtoolevents);
+		keys.sort();
+		keys.forEach(function(event) {
+			$('#trigger-event-select').append($('<option/>', {
+				value: event,
+				text: event
+			}));
+		});
+		$('#trigger-event-select').selectpicker('refresh');
+
 		var options = {
 			success: function(data) {
 				populateTriggerSelect(data);
@@ -822,18 +846,6 @@ function main() {
 			$(this).html('📟💩🔧');
 		}
 	});
-	
-	// put pre-canned events into the select in the trigger page
-	var keys = Object.keys(PDtoolevents);
-	keys.sort();
-	keys.forEach(function(event) {
-		$('#trigger-event-select').append($('<option/>', {
-			value: event,
-			text: event
-		}));
-	});
-	$('#trigger-event-select').selectpicker('refresh');
-	
 }
 
 $(document).ready(main);
