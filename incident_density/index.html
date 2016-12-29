@@ -106,7 +106,7 @@ function createChart(incidentdata) {
 
     incidentdata.data.forEach(function(incident) {
         if (incident.hasOwnProperty('created_on')) {
-            punchcard_data[(+moment(incident.created_on).format("d") * 23) + +moment(incident.created_on).format("H")][2]++;
+            punchcard_data[(+moment(incident.created_on).format("d") * 24) + +moment(incident.created_on).format("H")][2]++;
         }
     });
 
