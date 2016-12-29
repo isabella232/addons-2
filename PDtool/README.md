@@ -1,6 +1,6 @@
 # PDtool
 
-This is a standalone tool, suitable for use as a PD add-on, that can view the raw JSON of integrations found in your account, trigger some pre-canned events, view/ack/resolve open incidents, view/export users, and view/add/delete add-ons.
+This is a standalone tool, suitable for use as a PD add-on, that can view the raw JSON of integrations found in your account, trigger some pre-canned events, view/ack/resolve open incidents, view/export/edit users, and view/add/delete add-ons.
 
 ## How to use
 
@@ -8,7 +8,7 @@ This is a standalone tool, suitable for use as a PD add-on, that can view the ra
 ```
 https://pagerduty.github.io/addons/PDtool/index.html
 ```
-* or pass a token and user id in the URL like so:
+* or pass a token and user id in the URL, like so:
 ```
 https://pagerduty.github.io/addons/PDtool/index.html?token=<TOKEN>&userid=<USERID>
 ```
@@ -17,9 +17,9 @@ https://pagerduty.github.io/addons/PDtool/index.html?token=<TOKEN>&userid=<USERI
 a: Authentication
 i: Integrations
 t: Trigger Events
-n: Manage Incidents
-u: Export Users
-d: Manage Add-Ons
+n: Incidents
+u: Users
+d: Add-Ons
 ```
 for example, to specify only incidents, users and add-ons tab:
 ```
