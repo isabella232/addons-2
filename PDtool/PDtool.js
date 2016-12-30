@@ -47,7 +47,18 @@ function PDRequest(endpoint, method, options) {
 		},
 		error: function(err) {
 			$('.busy').hide();
-			alert('Error ' + err.status + ': ' + err.statusText + ' - please check the values in the Authentication tab.');
+			var alertStr = "Error '" + err.status + " - " + err.statusText + "' while attempting " + method + " request to '" + endpoint + "'";
+			try {
+				alertStr += ": " + err.responseJSON.error.message;
+			} catch (e) {
+				alertStr += ".";
+			}
+			
+			try {
+				alertStr += "\n\n" + err.responseJSON.error.errors.join("\n");
+			} catch (e) {}
+
+			alert(alertStr);
 		}
 	},
 	options);
@@ -176,7 +187,7 @@ function populateIncidentsResult() {
 	$('#incidents-result').append($('<table/>', {
 		id: "incidents-result-table"
 	}));
-	
+
 	$('#incidents-result-table').on('click', 'td button.resolve-button', function() {
 		var incidentID = $(this).attr('id');
 		var requestData = {
@@ -444,7 +455,7 @@ function processUsersEdit(tableData, data) {
 				"offset": offset,
 				"total": "true"
 			},
-			success: function(data) { processUsers(tableData, data); }
+			success: function(data) { processUsersEdit(tableData, data); }
 		}
 		
 		PDRequest("users", "GET", options);
@@ -460,24 +471,26 @@ function processUsersEdit(tableData, data) {
 				{ title: "Time Zone"},
 				{ title: "Color" },
 				{ title: "Description" }
-			]
-		});
-		$('#users-edit-result-table').Tabledit({
-		    url: '',
-		    onAlways: function(action, serialize) {
-			    var pairs = serialize.split('&');
-			    var id = pairs[0].split('=')[1];
-			    var field = pairs[1].split('=')[0];
-			    var value = decodeURIComponent(pairs[1].split('=')[1]);
-			    modifyUser(id, field, value);
-		    },
-		    editButton: false,
-		    deleteButton: false,
-		    hideIdentifier: true,
-		    columns: {
-		        identifier: [0, 'id'],
-		        editable: [[1, 'name'], [2, 'email'], [3, 'job_title'], [4, 'role'], [5, 'time_zone'], [6, 'color'], [7, 'description']]
-		    }
+			],
+			fnDrawCallback: function() {
+				$('#users-edit-result-table').Tabledit({
+				    url: '',
+				    onAlways: function(action, serialize) {
+					    var pairs = serialize.split('&');
+					    var id = pairs[0].split('=')[1];
+					    var field = pairs[1].split('=')[0];
+					    var value = decodeURIComponent(pairs[1].split('=')[1]);
+					    modifyUser(id, field, value);
+				    },
+				    editButton: false,
+				    deleteButton: false,
+				    hideIdentifier: true,
+				    columns: {
+				        identifier: [0, 'id'],
+				        editable: [[1, 'name'], [2, 'email'], [3, 'job_title'], [4, 'role'], [5, 'time_zone'], [6, 'color'], [7, 'description']]
+				    }
+				});
+    		}
 		});
 		$('.busy').hide();
 		$('#progressbar').attr("aria-valuenow", "0");
@@ -492,11 +505,7 @@ function modifyUser(id, field, value) {
 			user: {
 			}
 		},
-		success: function(data) {
-			console.log(data);
-		},
 		error: function(data) {
-			console.log(data);
 			alert("Failed to edit " + field + ": " + data.responseJSON.error.message + "\n\n" + data.responseJSON.error.errors.join("\n"));
 			populateUsersEdit();
 		}
@@ -699,6 +708,18 @@ function main() {
 		$('#trigger').show();
 		$('.busy').show();
 		$('#trigger-dest-select').html('');
+
+		// put pre-canned events into the select in the trigger page
+		var keys = Object.keys(PDtoolevents);
+		keys.sort();
+		keys.forEach(function(event) {
+			$('#trigger-event-select').append($('<option/>', {
+				value: event,
+				text: event
+			}));
+		});
+		$('#trigger-event-select').selectpicker('refresh');
+
 		var options = {
 			success: function(data) {
 				populateTriggerSelect(data);
@@ -717,7 +738,6 @@ function main() {
 	$('#auth-button').click(function() {
 		$('.detail').hide();
 		$('#auth').show();
-		populateIncidentsResult();
 	});
 
 	$('#users-export-button').click(function() {		
@@ -820,17 +840,13 @@ function main() {
 		PDEvent(options);
 	});
 	
-	// put pre-canned events into the select in the trigger page
-	var keys = Object.keys(PDtoolevents);
-	keys.sort();
-	keys.forEach(function(event) {
-		$('#trigger-event-select').append($('<option/>', {
-			value: event,
-			text: event
-		}));
+	$('.navbar-brand').click(function() {
+		if ( $(this).html() == '📟💩🔧') {
+			$(this).html('PD Tool');
+		} else {
+			$(this).html('📟💩🔧');
+		}
 	});
-	$('#trigger-event-select').selectpicker('refresh');
-	
 }
 
 $(document).ready(main);
