@@ -50,8 +50,7 @@ page.paperSize = {
    margin: { left: "1cm", right: "1cm", top: "1cm", bottom: "1cm" }
 };
 
-// Open Twitter on 'sencha' profile and, onPageLoad, do...
-page.open("https://martindstone.github.io/PDvis/index.html?token=" + system.args[1] + "&hideControls=true", function (status) {
+page.open("https://pagerduty.github.io/addons/PDvis/index.html?token=" + system.args[1] + "&hideControls=true", function (status) {
     // Check for page load success
     if (status !== "success") {
         console.log("Unable to access network");

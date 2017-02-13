@@ -6,6 +6,6 @@ This is a standalone tool, also suitable for use as a PagerDuty add-on, that aim
 
 * Construct a URL like so:
 ```
-https://martindstone.github.io/PDvis/index.html?token=XXXX
+https://pagerduty.github.io/addons/PDvis/index.html?token=XXXX
 ```
 * replacing XXXX with a valid v2 PagerDuty API token (read-only is fine)
