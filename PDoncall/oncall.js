@@ -60,6 +60,9 @@ function populateServiceSelect(offset) {
 			if ( data.more == true ) {
 				populateServiceSelect(data.offset + data.limit);
 			} else {
+				if ( localStorage.getItem("service-select-selected") && $('#service-select option[value="' + localStorage.getItem("service-select-selected") + '"]').length > 0) {
+					$('#service-select').val(localStorage.getItem("service-select-selected"));
+				}
 				populateEPDetails();
 			}
 		}
@@ -332,6 +335,7 @@ function main() {
 	}
 	
 	$('#service-select').change(function() {
+		localStorage.setItem("service-select-selected", $('#service-select').val());
 		populateEPDetails();
 	});
 
