@@ -2,6 +2,8 @@
 
 This is a standalone tool, also suitable for use as a PagerDuty add-on, that aims to show some useful visualizations of PagerDuty activity over time.
 
+![screenshot](PDvis.png)
+
 ## How to use
 
 * Construct a URL like so:
