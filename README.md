@@ -17,6 +17,9 @@ Brief descriptions of some of the projects you will find here:
 | lmgtfy | Web search results in an add-on |
 | on_call_hero | A game to demonstrate the trials and tribulations of the unsung on-call heroes |
 | schedule_conflict_detector | Display users with conflicting on-call shifts from two or more schedules |
+| statusbot | Monitor the status of any services available on the Statusbot API |
+| user-export | Deprecated. Use PDtool instead |
+| user_not_oncall | See which users in your PagerDuty account are never listed as being on-call in any of your schedules or escalation policies |
 
 ## Contributing to this repo:
 If you've built something on top of PagerDuty's API that we can display in an iframe, please share it with us at developers@pagerduty.com:
