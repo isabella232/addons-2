@@ -12,6 +12,11 @@ Brief descriptions of some of the projects you will find here:
 | PDoncall | See who's on call for any of your services, without logging in to PagerDuty |
 | PDtool | PagerDuty multi-tool - View the raw JSON of integrations found in your account, trigger some pre-canned events, view/ack/resolve open incidents, view/export/edit users, and view/add/delete add-ons. |
 | PDvis | Show some useful visualizations of PagerDuty activity over time. |
+| account_overview | Display a graphical overview of the connections between users, schedules, and services in your account |
+| incident_density | Identify trends around when incidents are being created in your account (note: obsoleted by PDvis) |
+| lmgtfy | Web search results in an add-on |
+| on_call_hero | A game to demonstrate the trials and tribulations of the unsung on-call heroes |
+| schedule_conflict_detector | Display users with conflicting on-call shifts from two or more schedules |
 
 ## Contributing to this repo:
 If you've built something on top of PagerDuty's API that we can display in an iframe, please share it with us at developers@pagerduty.com:
