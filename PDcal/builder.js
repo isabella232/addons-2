@@ -131,8 +131,7 @@ function main() {
 						urls.push($(this).val());
 					});
 					var PDcalURL = 'http://pagerduty.github.io/addons/PDcal/index.html?iCalURL=' + urls.join('&iCalURL=');
-					$('#calendar-url').html('<h1>PDcal URL for ' + urls.length + ' schedules:</h1>(Copy and paste in a browser or iframe)<pre>' + PDcalURL + '</pre>');
-//					$('#calendar-preview').html('<iframe src="' + PDcalURL + '"></iframe>');
+					$('#calendar-url').html('<h1>PDcal URL for ' + urls.length + ' schedules:</h1><pre><a target="_blank" href="' + PDcalURL + '">' + PDcalURL + '</a></pre>');
 				}
 			});
 			$('.busy').hide();
