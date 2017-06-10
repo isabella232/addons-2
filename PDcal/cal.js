@@ -8,7 +8,6 @@ function getParametersByName(name) {
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "g");
     var match = regex.exec(location.search);
     while (match != null) {
-	    console.log("match: " + match[1]);
 	    matches.push(match[1]);
 	    match = regex.exec(location.search);
     }
@@ -30,7 +29,6 @@ function getParameterByName(name) {
 
 function main() {
 	var urls = getParametersByName("iCalURL");
-	console.log(urls);
 	if ( !urls ) {
 		$('#calendar').html('<h1>Please put a PagerDuty iCal URL in the iCalURL parameter</h1>');
 		return;
@@ -40,10 +38,9 @@ function main() {
 	var calNames = [];
 	var events = [];
 	var peopleColors = {};
-	var calColors = [];
 	var outstanding_requests = 0;
 	
-	urls.forEach(function(url) {
+	urls.forEach(function(url, index) {
 		
 		outstanding_requests++;
 		url = "https://cors-anywhere.herokuapp.com/" + url;
@@ -62,7 +59,6 @@ function main() {
 				
 				var calName = comp.getFirstProperty("x-wr-calname").getFirstValue();
 				calNames.push(calName);
-				calColors.push(colors[outstanding_requests]);
 				
 				var vevents = comp.getAllSubcomponents("vevent");
 				vevents.forEach(function(vevent) {
@@ -76,7 +72,7 @@ function main() {
 						title: title,
 						start: (new ICAL.Time(event.startDate)).toString(),
 						end: (new ICAL.Time(event.endDate)).toString(),
-						color: urls.length > 1 ? calColors[outstanding_requests] : peopleColors[title],
+						color: urls.length > 1 ? calColors[index] : peopleColors[title],
 						weburl: event._firstProp("url")
 					});
 				});
