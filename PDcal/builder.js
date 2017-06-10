@@ -61,7 +61,7 @@ function processSchedules(callback, data) {
 			data: {
 				"offset": offset
 			},
-			success: function(data) { processSchedules(tableData, data); }
+			success: function(data) { processSchedules(callback, data); }
 		}
 		
 		PDRequest("schedules", "GET", options);		
