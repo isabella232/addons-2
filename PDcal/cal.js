@@ -84,14 +84,15 @@ function main() {
 					var headline = '<h1 style="background-color: #f0f0f0">';
 					if ( calNames.length == 1 ) {
 						headline += calNames[0];
+						headline += '</h1><br>';
 					} else {
-						headline += 'On Call Schedules for: ';
+						headline += 'On Call Schedules for: </h1><h3 style="background-color: #f0f0f0">';
 						var calNamesHTML = calNames.map(function(calName, index) {
-							return '<div style="background-color: ' + calColors[index] + '; border-radius: 10px; width: 40px; display: inline-block">&nbsp;&nbsp;</div> ' + calName.replace(/On Call Schedule for /, '');
+							return '<div style="background-color: ' + calColors[index] + '; border-radius: 10px; width: 30px; display: inline-block">&nbsp;&nbsp;</div> ' + calName.replace(/On Call Schedule for /, '');
 						});
-						headline += calNamesHTML.join(', ');
+						headline += calNamesHTML.join('<br>');
+						headline += '</h3><br>';
 					}
-					headline += '</h1><br>';
 					$('#calendar-title').html(headline);
 					document.title = calNames.join(', ');
 					$('#calendar').fullCalendar({

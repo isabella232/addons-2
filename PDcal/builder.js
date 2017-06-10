@@ -99,6 +99,7 @@ function getAllScheduleURLs(callback) {
 function main() {
 	token = getParameterByName('token');
 	
+	$('.busy').show();
 	async.series([
 		function(callback) {
 			var options = {
@@ -130,10 +131,11 @@ function main() {
 						urls.push($(this).val());
 					});
 					var PDcalURL = 'http://pagerduty.github.io/addons/PDcal/index.html?iCalURL=' + urls.join('&iCalURL=');
-					$('#calendar-url').html(PDcalURL);
-					$('#calendar-preview').html('<iframe src="' + PDcalURL + '"></iframe>');
+					$('#calendar-url').html('<h1>PDcal URL for ' + urls.length + ' schedules:</h1>(Copy and paste in a browser or iframe)<pre>' + PDcalURL + '</pre>');
+//					$('#calendar-preview').html('<iframe src="' + PDcalURL + '"></iframe>');
 				}
 			});
+			$('.busy').hide();
 			console.log(schedules);
 			callback(null, "log");
 		}
