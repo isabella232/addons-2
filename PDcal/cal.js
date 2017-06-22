@@ -68,10 +68,14 @@ function main() {
 					if ( ! peopleColors[title] ) {
 						peopleColors[title] = colors[Math.floor(Math.random() * colors.length)];
 					}
+
+					var startdate = new Date(event.startDate.toUnixTime() * 1000);
+					var enddate = new Date(event.endDate.toUnixTime() * 1000);
+
 					events.push({
 						title: title,
-						start: (new ICAL.Time(event.startDate)).toString(),
-						end: (new ICAL.Time(event.endDate)).toString(),
+						start: startdate,
+						end: enddate,
 						color: urls.length > 1 ? calColors[index] : peopleColors[title],
 						weburl: event._firstProp("url")
 					});
