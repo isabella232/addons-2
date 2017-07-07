@@ -55,6 +55,27 @@ text.barlabel {
 	margin: auto;
 }
 
+.busy .message {
+	width: 80%;
+	opacity: 1.0;
+	top: 60px; right: 0; bottom: auto; left: 0;
+	position: fixed;
+	margin: auto;
+	color: #fff;
+	text-align: center;
+}
+
+.busy .percent {
+	width: 80%;
+	opacity: 1.0;
+	top: 140px; right: 0; bottom: auto; left: 0;
+	position: fixed;
+	margin: auto;
+	color: #fff;
+	text-align: center;
+}
+
+
 .messages {
 	background-color: #ccc;
 	font-size: 18px;

@@ -33,7 +33,7 @@ function PDRequest(token, endpoint, method, options) {
 				alertStr += "\n\n" + err.responseJSON.error.errors.join("\n");
 			} catch (e) {}
 
-			alert(alertStr);
+			console.log(alertStr);
 		}
 	},
 	options);
