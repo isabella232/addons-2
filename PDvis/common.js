@@ -56,3 +56,72 @@ function dayNumberToString(n, long) {
 	if (long) { return dayNames[n]; }
 	else { return dayNamesShort[n]; }
 }
+
+function fetch(endpoint, params, callback, progressCallback) {
+	var limit = 100;
+	var infoFns = [];
+	var fetchedData = [];
+
+	var commonParams = {
+			total: true,
+			limit: limit
+	};
+
+	var getParams = $.extend(true, {}, params, commonParams);
+
+	var options = {
+		data: getParams,
+		success: function(data) {
+			var total = data.total;
+			Array.prototype.push.apply(fetchedData, data[endpoint]);
+
+			if ( data.more == true ) {
+				var indexes = [];
+				for ( i = limit; i < total; i += limit ) {
+					indexes.push(Number(i));
+				}
+				indexes.forEach(function(i) {
+					var offset = i;
+					infoFns.push(function(callback) {
+						var options = {
+							data: $.extend(true, { offset: offset }, getParams),
+							success: function(data) {
+								Array.prototype.push.apply(fetchedData, data[endpoint]);
+								if (progressCallback) {
+									progressCallback(data.total, fetchedData.length);
+								}
+								callback(null, data);
+							}
+						}
+						PDRequest(getParameterByName('token'), endpoint, "GET", options);
+					});
+				});
+
+				async.parallel(infoFns, function(err, results) {
+					callback(fetchedData);
+				});
+			} else {
+				callback(fetchedData);
+			}
+		}
+	}
+	PDRequest(getParameterByName('token'), endpoint, "GET", options);
+}
+
+function fetchLogEntries(since, until, callback, progressCallback) {
+	var params = {
+		since: since.toISOString(),
+		until: until.toISOString(),
+		is_overview: false
+	}
+	fetch('log_entries', params, callback, progressCallback);
+}
+
+function fetchIncidents(since, until, callback, progressCallback) {
+	var params = {
+		since: since.toISOString(),
+		until: until.toISOString(),
+		'statuses[]': 'resolved'
+	}
+	fetch('incidents', params, callback, progressCallback);
+}

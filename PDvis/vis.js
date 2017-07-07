@@ -742,75 +742,6 @@ function drawPunchcard(element, since, until, punchcard, metric, dailyTotals, ho
 		    .call(yAxis);
 }
 
-function fetch(endpoint, params, callback, progressCallback) {
-	var limit = 100;
-	var infoFns = [];
-	var fetchedData = [];
-
-	var commonParams = {
-			total: true,
-			limit: limit
-	};
-
-	var getParams = $.extend(true, {}, params, commonParams);
-
-	var options = {
-		data: getParams,
-		success: function(data) {
-			var total = data.total;
-			Array.prototype.push.apply(fetchedData, data[endpoint]);
-
-			if ( data.more == true ) {
-				var indexes = [];
-				for ( i = limit; i < total; i += limit ) {
-					indexes.push(Number(i));
-				}
-				indexes.forEach(function(i) {
-					var offset = i;
-					infoFns.push(function(callback) {
-						var options = {
-							data: $.extend(true, { offset: offset }, getParams),
-							success: function(data) {
-								Array.prototype.push.apply(fetchedData, data[endpoint]);
-								if (progressCallback) {
-									progressCallback(data.total, fetchedData.length);
-								}
-								callback(null, data);
-							}
-						}
-						PDRequest(getParameterByName('token'), endpoint, "GET", options);
-					});
-				});
-
-				async.parallel(infoFns, function(err, results) {
-					callback(fetchedData);
-				});
-			} else {
-				callback(fetchedData);
-			}
-		}
-	}
-	PDRequest(getParameterByName('token'), endpoint, "GET", options);
-}
-
-function fetchLogEntries(since, until, callback, progressCallback) {
-	var params = {
-		since: since.toISOString(),
-		until: until.toISOString(),
-		is_overview: false
-	}
-	fetch('log_entries', params, callback, progressCallback);
-}
-
-function fetchIncidents(since, until, callback, progressCallback) {
-	var params = {
-		since: since.toISOString(),
-		until: until.toISOString(),
-		'statuses[]': 'resolved'
-	}
-	fetch('incidents', params, callback, progressCallback);
-}
-
 function fetchReportData(since, until, callback) {
 	var progress = {
 		incidents: {
@@ -838,6 +769,12 @@ function fetchReportData(since, until, callback) {
 		function(callback) {
 			fetchIncidents(since, until, function(data) {
 				callback(null, data);
+			},
+			function(total, done) {
+				progress.incidents.total = total;
+				progress.incidents.done = done;
+				progress_percent = Math.round(( progress.incidents.done + progress.log_entries.done ) / ( progress.incidents.total + progress.log_entries.total ) * 100);
+				$('#busy-percent').html(`<h1>${progress_percent}%</h1>`);
 			});
 		}
 	],
