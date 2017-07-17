@@ -5,6 +5,24 @@ function getParameterByName(name) {
     return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+function getParametersByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var matches = [];
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "g");
+    var match = regex.exec(location.search);
+    while (match != null) {
+	    matches.push(match[1]);
+	    match = regex.exec(location.search);
+    }
+    if ( matches.length < 1 ) {
+	    return null;
+    }
+    
+    return matches.map(function(match) {
+	    return decodeURIComponent(match.replace(/\+/g, " "));
+    });
+}
+
 function PDRequest(token, endpoint, method, options) {
 
 	if ( !token ) {
