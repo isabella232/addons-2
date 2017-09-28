@@ -292,8 +292,61 @@ function populateIncidentsResult() {
 	PDRequest("incidents", "GET", options);
 }
 
-function processUsers(tableData, data) {
-	data.users.forEach(function(user) {
+function fetch(endpoint, params, callback, progressCallback) {
+	var limit = 100;
+	var infoFns = [];
+	var fetchedData = [];
+
+	var commonParams = {
+			total: true,
+			limit: limit
+	};
+
+	var getParams = $.extend(true, {}, params, commonParams);
+
+	var options = {
+		data: getParams,
+		success: function(data) {
+			var total = data.total;
+			Array.prototype.push.apply(fetchedData, data[endpoint]);
+
+			if ( data.more == true ) {
+				var indexes = [];
+				for ( i = limit; i < total; i += limit ) {
+					indexes.push(Number(i));
+				}
+				indexes.forEach(function(i) {
+					var offset = i;
+					infoFns.push(function(callback) {
+						var options = {
+							data: $.extend(true, { offset: offset }, getParams),
+							success: function(data) {
+								Array.prototype.push.apply(fetchedData, data[endpoint]);
+								if (progressCallback) {
+									progressCallback(data.total, fetchedData.length);
+								}
+								callback(null, data);
+							}
+						}
+						PDRequest(endpoint, "GET", options);
+					});
+				});
+
+				async.parallel(infoFns, function(err, results) {
+					callback(fetchedData);
+				});
+			} else {
+				callback(fetchedData);
+			}
+		}
+	}
+	PDRequest(endpoint, "GET", options);
+}
+
+
+function processUsers(users) {
+	var tableData = [];
+	users.forEach(function(user) {
 		var methods = {
 			phone: [],
 			email: [],
@@ -325,6 +378,7 @@ function processUsers(tableData, data) {
 		
 		tableData.push(
 			[
+				user.id,
 				user.name,
 				user.email,
 				user.job_title,
@@ -336,46 +390,26 @@ function processUsers(tableData, data) {
 			]
 		);
 	});
-	if ( data.more == true ) {
-		var offset = data.offset + data.limit;
-		var progress = Math.round((data.offset / data.total) * 100);
-		$('#progressbar').attr("aria-valuenow", "" + progress);
-		$('#progressbar').attr("style", "width: " + progress + "%;");
-		$('#progressbar').html("" + progress + "%");
-		
-		var options = {
-			data: {
-				"include[]": ["contact_methods"],
-				"offset": offset,
-				"total": "true"
-			},
-			success: function(data) { processUsers(tableData, data); }
-		}
-		
-		PDRequest("users", "GET", options);
-	} else {
-		$('#users-export-result-table').DataTable({
-			data: tableData,
-			columns: [
-				{ title: "User Name" },
-				{ title: "Login"},
-				{ title: "Title"},
-				{ title: "PD Role"},
-				{ title: "Teams"},
-				{ title: "Contact email" },
-				{ title: "Contact phone" },
-				{ title: "Contact sms" },
-			],
-			dom: 'Bfrtip',
-			buttons: [
-				'copy', 'csv', 'excel', 'pdf', 'print'
-			]
-		});
-		$('.busy').hide();
-		$('#progressbar').attr("aria-valuenow", "0");
-		$('#progressbar').attr("style", "width: 0%;");
-		$('#progressbar').html("0%");
-	}
+
+	$('#users-export-result-table').DataTable({
+		data: tableData,
+		columns: [
+			{ title: "PD User ID" },
+			{ title: "User Name" },
+			{ title: "Login"},
+			{ title: "Title"},
+			{ title: "PD Role"},
+			{ title: "Teams"},
+			{ title: "Contact email" },
+			{ title: "Contact phone" },
+			{ title: "Contact sms" },
+		],
+		dom: 'Bfrtip',
+		buttons: [
+			'copy', 'csv', 'excel', 'pdf', 'print'
+		]
+	});
+	$('.busy').hide();
 }
 
 function populateUsersResult() {
@@ -384,17 +418,14 @@ function populateUsersResult() {
 	$('#users-export-result').append($('<table/>', {
 		id: "users-export-result-table"
 	}));
-	
-	var tableData = [];
+
 	var options = {
-		data: {
-			"include[]": ["contact_methods"],
-			"total": "true"
-		},
-		success: function(data) { processUsers(tableData, data); }
-	}
-	
-	PDRequest("users", "GET", options);
+		"include[]": "contact_methods",
+		"total": "true"
+	};
+	fetch("users", options, function(users) {
+		processUsers(users)
+	});
 }
 
 
