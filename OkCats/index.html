@@ -1,0 +1,90 @@
+<html>
+	<head>
+		<title>OkCats</title>
+		<link rel="stylesheet" href="../lib/pagerduty-platform-base.css" title="PagerDuty Style" type="text/css" media="screen" charset="utf-8">
+		<script src="../lib/jquery.js" type="text/javascript"></script>
+		<script src="../lib/pdjs.js" type="text/javascript"></script>
+	</head>
+	<body>
+		<form>
+			<table cellpadding="5">
+				<tbody>
+					<tr>
+						<td>Integration Key:</td>
+						<td><input id="cats_servicekey" size="50" type="text" value="" placeholder="32 character string" /></td>
+					</tr>
+					<tr>
+						<td>Description:</td>
+						<td><input id="cats_description" size="50" type="text" value="Everything is OkCat" /></td>
+					</tr>
+					<tr>
+						<td>Calming cat picture:</td>
+						<td>
+							<select id="cat_choice">
+								<option value="0">Two cats</option>
+								<option value="1">Le chat au supermarché</option>
+								<option value="2">A cat's nose</option>
+								<option value="3">1.8mb cat gif</option>
+								<option value="4">Cool cat</option>
+								<option value="5">Cat has fallen over</option>
+								<option value="6">Device has been destroyed</option>
+								<option value="7">Cat in containers</option>
+								<option value="8">Warning</option>
+								<option value="2">A cat's nose</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Extra calmness:</td>
+						<td><input id="cat_check1" type="checkbox" /> include a link to more cat videos</td>
+					</tr>
+					<tr>
+						<td>Trigger non-incident:</td>
+						<td><input type="button" value="Send a OkCat event" class="btn btn-primary" /></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+
+		<script>
+			$ = jQuery;
+			PDJS = new PDJSobj();
+			
+			function PDTrigger() {
+			    service_key = $("#cats_servicekey").val()
+			    if(service_key.length<1) {alert("Please specify a service key"); return false;}
+			    description = $("#cats_description").val()
+			    cat_array = ["https://upload.wikimedia.org/wikipedia/commons/5/59/Cat_1111.jpg", "https://upload.wikimedia.org/wikipedia/commons/b/b7/Cat_on_a_mouse_pad.jpg", "https://upload.wikimedia.org/wikipedia/commons/b/be/Estrella_cat.jpg", "https://24.media.tumblr.com/tumblr_lqwgsk8Wu51qikw9ko1_500.gif", "https://24.media.tumblr.com/tumblr_lu46q7HXIu1qlyuwso1_500.jpg", "https://25.media.tumblr.com/tumblr_m27d87jWyq1qze0hyo1_500.jpg", "https://24.media.tumblr.com/tumblr_m854j24ud71qejbiro1_500.jpg", "https://26.media.tumblr.com/tumblr_lupy2qZz2l1r6b7kmo1_500.jpg", "https://25.media.tumblr.com/tumblr_lyg1y7FFnB1qet4edo1_500.jpg"]
+			    image = cat_array[$("#cat_choice").val()]
+			    contexts = [{
+			        "type": "image",
+			            "src": image
+			    }]
+			    if ($("#cat_check1")[0].checked) contexts[1] = {
+			        "type": "link",
+			            "href": "https://www.youtube.com/watch?v=nMwpYy0um8U",
+			            "text": "Calming cat video"
+			    }
+			    incident = {
+			        service_key: service_key,
+			        description: description,
+			        incident_key: "catastrophic success_" + Math.random(),
+			        details: {
+			            explanation: "https://www.pagerduty.com/blog/okcats-cat-photos-extravaganza"
+			        },
+			        data: {
+			            contexts: contexts
+			        },
+			        success: function () {
+			            alert("OkCat sent")
+			        },
+			    }
+			    console.log(incident)
+			    t = PDJS.trigger(incident);
+			    console.log(t)
+			}
+			
+			$("input[value='Send a OkCat event']").click(PDTrigger);
+		</script>
+	</body>
+</html>
