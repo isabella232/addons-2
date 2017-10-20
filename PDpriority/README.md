@@ -1,4 +1,4 @@
-# PDoncall
+# PDpriority
 PagerDuty Priority Report
 
 ![screenshot](PDpriority.png)
