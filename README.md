@@ -15,7 +15,9 @@ Brief descriptions of some of the projects you will find here:
 | OkCats | Trigger incidents with cat pictures |
 | on_call_hero | A game to demonstrate the trials and tribulations of the unsung on-call heroes |
 | PDcal | Make a public web view of a PagerDuty on-call schedule, given the URL of the iCal download found in the export menu. Includes a handy bookmarklet! |
+| PDmaintenance | Quickly pause and unpause many services |
 | PDoncall | See who's on call for any of your services, without logging in to PagerDuty |
+| PDpriority | See a report of incidents within a time range filtered by priority |
 | PDtool | PagerDuty multi-tool - View the raw JSON of integrations found in your account, trigger some pre-canned events, view/ack/resolve open incidents, view/export/edit users, and view/add/delete add-ons. |
 | PDvis | Show some useful visualizations of PagerDuty activity over time. |
 | schedule_conflict_detector | Display users with conflicting on-call shifts from two or more schedules |
