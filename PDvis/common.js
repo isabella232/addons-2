@@ -26,34 +26,47 @@ function getParametersByName(name) {
     });
 }
 
+function generateRandomState(length) {
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var result = '';
+
+  for (var i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  return result;
+
+}
+
 function requestOAuthToken() {
-  var client_state = "xyzABC123";
-  window.localStorage.setItem('pdvisClientState', client_state);
-  var client_id = "b5236b4b54e5ec7b2b51cccc603174a2ac0b575f33753e04a2924dced669c03b";
-  var redirect_uri = "http://localhost:8000";
-  var oauth_route = "http://app.pagerduty.net/oauth/authorize?client_id=" + client_id + "&redirect_uri=" + redirect_uri + "&response_type=token&state=" + client_state;
-  window.location.href = oauth_route;
+  var state = generateRandomState(16);
+  window.localStorage.setItem('pdvisClientState', state);
+  var clientId = "b5236b4b54e5ec7b2b51cccc603174a2ac0b575f33753e04a2924dced669c03b";
+  var redirect_uri = "https://pagerduty.github.io/addons/PDvis/index.html";
+  var oauthRoute = "http://app.pagerduty.com/oauth/authorize?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=token&state=" + state;
+  window.location.href = oauthRoute;
 }
 
 function getOAuthResponseParams() {
-  var oauth_params = [];
-	var hash = window.location.hash.replace(/^#/, '?');
-	var param_token = getParameterByName('access_token', hash);
-  if (param_token) oauth_params.push(param_token);
-	var param_state = getParameterByName('state', hash);
-  if (param_state) oauth_params.push(param_state);
-  return oauth_params;
+  var oauthParams = {};
+  var hash = window.location.hash.replace(/^#/, '?');
+  var token = getParameterByName('access_token', hash);
+  if (token) oauthParams.token = token;
+  var state = getParameterByName('state', hash);
+  if (state) oauthParams.state = state;
+
+  window.location.hash = '';
+
+  return oauthParams;
 }
 
 function receiveOAuthToken(oauthParams) {
-  var param_token = oauthParams[0];
-  var param_state = oauthParams[1];
-  var client_state = window.localStorage.getItem('pdvisClientState');
-  if (param_state != client_state) {
+  var state = window.localStorage.getItem('pdvisClientState');
+  if (oauthParams.state !== state) {
     alert("ERROR: OAuth failed due to bad state. Can't access PagerDuty API without OAuth");
     return;
   }
-  window.localStorage.setItem('pdvisOAuthToken', param_token);
+  window.localStorage.setItem('pdvisOAuthToken', oauthParams.token);
 }
 
 function getToken() {
@@ -65,7 +78,7 @@ function PDRequest(token, endpoint, method, options) {
 	var merged = $.extend(true, {}, {
 		type: method,
 		dataType: "json",
-		url: "http://api.pagerduty.net/" + endpoint,
+		url: "http://api.pagerduty.com/" + endpoint,
 		headers: {
 			"Authorization": "Bearer " + token,
 			"Accept": "application/vnd.pagerduty+json;version=2"

@@ -827,16 +827,15 @@ function setProgressBar(progress) {
 
 function main() {
 	debugger
-	var oauthResponseParams = getOAuthResponseParams()
 	if (!getToken()) {
-		if (oauthResponseParams.length == 0) {
+		var oauthResponseParams = getOAuthResponseParams();
+		if (!oauthResponseParams.token && !oauthResponseParams.state) {
 			requestOAuthToken();
 			return;
 		} else {
 			receiveOAuthToken(oauthResponseParams);
 		}
 	}
-	console.log('pdvisOAuthToken ' + window.localStorage.getItem('pdvisOAuthToken'));
 
 	$('#since').datepicker();
 	$('#until').datepicker();
