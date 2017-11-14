@@ -1,7 +1,10 @@
-function getParameterByName(name) {
+function getParameterByName(name, source) {
+    if (typeof source === 'undefined') {
+      source = location.search;
+    }
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
+        results = regex.exec(source);
     return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
@@ -17,25 +20,54 @@ function getParametersByName(name) {
     if ( matches.length < 1 ) {
 	    return null;
     }
-    
+
     return matches.map(function(match) {
 	    return decodeURIComponent(match.replace(/\+/g, " "));
     });
 }
 
-function PDRequest(token, endpoint, method, options) {
+function requestOAuthToken() {
+  var client_state = "xyzABC123";
+  window.localStorage.setItem('pdvisClientState', client_state);
+  var client_id = "b5236b4b54e5ec7b2b51cccc603174a2ac0b575f33753e04a2924dced669c03b";
+  var redirect_uri = "http://localhost:8000";
+  var oauth_route = "http://app.pagerduty.net/oauth/authorize?client_id=" + client_id + "&redirect_uri=" + redirect_uri + "&response_type=token&state=" + client_state;
+  window.location.href = oauth_route;
+}
 
-	if ( !token ) {
-		alert("Please put a token in the URL, like .../index.html?token=<YOUR_V2_API_TOKEN>");
-		return;
-	}
+function getOAuthResponseParams() {
+  var oauth_params = [];
+	var hash = window.location.hash.replace(/^#/, '?');
+	var param_token = getParameterByName('access_token', hash);
+  if (param_token) oauth_params.push(param_token);
+	var param_state = getParameterByName('state', hash);
+  if (param_state) oauth_params.push(param_state);
+  return oauth_params;
+}
+
+function receiveOAuthToken(oauthParams) {
+  var param_token = oauthParams[0];
+  var param_state = oauthParams[1];
+  var client_state = window.localStorage.getItem('pdvisClientState');
+  if (param_state != client_state) {
+    alert("ERROR: OAuth failed due to bad state. Can't access PagerDuty API without OAuth");
+    return;
+  }
+  window.localStorage.setItem('pdvisOAuthToken', param_token);
+}
+
+function getToken() {
+  return window.localStorage.getItem('pdvisOAuthToken');
+}
+
+function PDRequest(token, endpoint, method, options) {
 
 	var merged = $.extend(true, {}, {
 		type: method,
 		dataType: "json",
-		url: "https://api.pagerduty.com/" + endpoint,
+		url: "http://api.pagerduty.net/" + endpoint,
 		headers: {
-			"Authorization": "Token token=" + token,
+			"Authorization": "Bearer " + token,
 			"Accept": "application/vnd.pagerduty+json;version=2"
 		},
 		error: function(err, textStatus) {
@@ -46,12 +78,16 @@ function PDRequest(token, endpoint, method, options) {
 			} catch (e) {
 				alertStr += ".";
 			}
-			
+
 			try {
 				alertStr += "\n\n" + err.responseJSON.error.errors.join("\n");
 			} catch (e) {}
 
 			console.log(alertStr);
+
+      console.log("Attempting to get new OAuth token");
+      window.localStorage.removeItem('pdvisOAuthToken');
+      requestOAuthToken();
 		}
 	},
 	options);
@@ -62,7 +98,7 @@ function PDRequest(token, endpoint, method, options) {
 function hourNumberToString(n, long) {
 	var m = (n > 12) ? "p" : "a";
 	var h = (n % 12 == 0) ? 12 : n % 12;
-	
+
 	if (long) { return h + ":00" + m + "m"; }
 	else { return h + m }
 }
@@ -70,7 +106,7 @@ function hourNumberToString(n, long) {
 function dayNumberToString(n, long) {
 	var dayNamesShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 	var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-	
+
 	if (long) { return dayNames[n]; }
 	else { return dayNamesShort[n]; }
 }
@@ -111,7 +147,7 @@ function fetch(endpoint, params, callback, progressCallback) {
 								callback(null, data);
 							}
 						}
-						PDRequest(getParameterByName('token'), endpoint, "GET", options);
+						PDRequest(getToken(), endpoint, "GET", options);
 					});
 				});
 
@@ -123,7 +159,7 @@ function fetch(endpoint, params, callback, progressCallback) {
 			}
 		}
 	}
-	PDRequest(getParameterByName('token'), endpoint, "GET", options);
+	PDRequest(getToken(), endpoint, "GET", options);
 }
 
 function fetchLogEntries(since, until, callback, progressCallback) {

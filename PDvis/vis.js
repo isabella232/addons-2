@@ -138,7 +138,7 @@ function visualize(data, metric, since, until, includeLowUrgency) {
 
 			if ( punchcard[i][j].TTA.length ) {
 				dailyTotals[i].TTA = dailyTotals[i].TTA.concat(punchcard[i][j].TTA);
-				hourlyTotals[j].TTA = hourlyTotals[j].TTA.concat(punchcard[i][j].TTA);				
+				hourlyTotals[j].TTA = hourlyTotals[j].TTA.concat(punchcard[i][j].TTA);
 			}
 
 			var v = {
@@ -416,7 +416,7 @@ function drawWeekly(element, since, until, data, metric, hoverFormatter) {
         .on("click", function(d) {
 	        if ( d[metric] > 0 ) {
 		        var params = {
-			        token: getParameterByName('token'),
+			        token: getToken(),
 			        since: moment(d.weekOfLong, "MMMM DD, YYYY").weekday(0).toISOString(),
 			        until: moment(d.weekOfLong, "MMMM DD, YYYY").weekday(6).toISOString()
 		        }
@@ -585,7 +585,7 @@ function drawPunchcard(element, since, until, punchcard, metric, dailyTotals, ho
         .on("click", function(d) {
 	        if ( d[metric] > 0 ) {
 		        var params = {
-			        token: getParameterByName('token'),
+			        token: getToken(),
 			        since: $('#since').datepicker("getDate").toISOString(),
 			        until: $('#until').datepicker("getDate").toISOString(),
 			        day: d.day,
@@ -636,7 +636,7 @@ function drawPunchcard(element, since, until, punchcard, metric, dailyTotals, ho
         .on("click", function(d, i) {
 	        if ( d[metric] > 0 ) {
 		        var params = {
-			        token: getParameterByName('token'),
+			        token: getToken(),
 			        since: $('#since').datepicker("getDate").toISOString(),
 			        until: $('#until').datepicker("getDate").toISOString(),
 			        day: i
@@ -686,7 +686,7 @@ function drawPunchcard(element, since, until, punchcard, metric, dailyTotals, ho
         .on("click", function(d, i) {
 	        if ( d[metric] > 0 ) {
 		        var params = {
-			        token: getParameterByName('token'),
+			        token: getToken(),
 			        since: $('#since').datepicker("getDate").toISOString(),
 			        until: $('#until').datepicker("getDate").toISOString(),
 			        hour: i
@@ -826,6 +826,18 @@ function setProgressBar(progress) {
 }
 
 function main() {
+	debugger
+	var oauthResponseParams = getOAuthResponseParams()
+	if (!getToken()) {
+		if (oauthResponseParams.length == 0) {
+			requestOAuthToken();
+			return;
+		} else {
+			receiveOAuthToken(oauthResponseParams);
+		}
+	}
+	console.log('pdvisOAuthToken ' + window.localStorage.getItem('pdvisOAuthToken'));
+
 	$('#since').datepicker();
 	$('#until').datepicker();
 
@@ -856,7 +868,7 @@ function main() {
 					callback(null, 'yay');
 				}
 			}
-			PDRequest(getParameterByName('token'), 'users', 'GET', options);
+			PDRequest(getToken(), 'users', 'GET', options);
 		},
 		function(callback) {
 			$('#busy-message').html('<h1>Getting incidents and log entries...</h1>');
