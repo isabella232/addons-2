@@ -826,7 +826,6 @@ function setProgressBar(progress) {
 }
 
 function main() {
-	debugger
 	if (!getToken()) {
 		var oauthResponseParams = getOAuthResponseParams();
 		if (!oauthResponseParams.token && !oauthResponseParams.state) {

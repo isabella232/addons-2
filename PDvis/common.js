@@ -1,10 +1,14 @@
-function getParameterByName(name, source) {
-    if (typeof source === 'undefined') {
-      source = location.search;
-    }
+function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(source);
+    results = regex.exec(location.search);
+    return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function getHashParameterByName(name, isHash) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
+    results = regex.exec(location.hash);
     return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
@@ -42,17 +46,16 @@ function requestOAuthToken() {
   var state = generateRandomState(16);
   window.localStorage.setItem('pdvisClientState', state);
   var clientId = "b5236b4b54e5ec7b2b51cccc603174a2ac0b575f33753e04a2924dced669c03b";
-  var redirect_uri = "https://pagerduty.github.io/addons/PDvis/index.html";
+  var redirectUri = "https://pagerduty.github.io/addons/PDvis/index.html";
   var oauthRoute = "http://app.pagerduty.com/oauth/authorize?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=token&state=" + state;
   window.location.href = oauthRoute;
 }
 
 function getOAuthResponseParams() {
   var oauthParams = {};
-  var hash = window.location.hash.replace(/^#/, '?');
-  var token = getParameterByName('access_token', hash);
+  var token = getHashParameterByName('access_token');
   if (token) oauthParams.token = token;
-  var state = getParameterByName('state', hash);
+  var state = getHashParameterByName('state');
   if (state) oauthParams.state = state;
 
   window.location.hash = '';
