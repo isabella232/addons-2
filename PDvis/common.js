@@ -24,7 +24,7 @@ function getParametersByName(name) {
     if ( matches.length < 1 ) {
 	    return null;
     }
-    
+
     return matches.map(function(match) {
 	    return decodeURIComponent(match.replace(/\+/g, " "));
     });
@@ -72,6 +72,11 @@ function receiveOAuthToken(oauthParams) {
   window.localStorage.setItem('pdvisOAuthToken', oauthParams.token);
 }
 
+function removeOAuthToken() {
+  window.localStorage.removeItem('pdvisOAuthToken');
+  window.localStorage.removeItem('pdvisClientState');
+}
+
 function getToken() {
   return window.localStorage.getItem('pdvisOAuthToken');
 }
@@ -102,7 +107,7 @@ function PDRequest(token, endpoint, method, options) {
 			console.log(alertStr);
 
 			console.log("Attempting to get new OAuth token");
-			window.localStorage.removeItem('pdvisOAuthToken');
+			removeOAuthToken();
 			requestOAuthToken();
 		}
 	},

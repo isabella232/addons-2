@@ -826,13 +826,34 @@ function setProgressBar(progress) {
 }
 
 function main() {
+	$('#login').click(function(e) {
+		requestOAuthToken();
+	});
+	$('#logout').click(function(e) {
+		removeOAuthToken();
+		$('#login').show();
+		$('#login-text').show();
+		$('#logout').hide();
+		$('#addon-content').hide();
+		$('.busy').hide();
+	});
+
 	if (!getToken()) {
 		var oauthResponseParams = getOAuthResponseParams();
 		if (!oauthResponseParams.token && !oauthResponseParams.state) {
-			requestOAuthToken();
+			// normal page load - when a user visits the addon page
+			$('#addon-content').hide();
+			$('.busy').hide();
+			$('#logout').hide();
 			return;
 		} else {
+			// page load when being redirected from PagerDuty OAuth service
 			receiveOAuthToken(oauthResponseParams);
+
+			$('#addon-content').show();
+			$('#logout').show();
+			$('#login').hide();
+			$('#login-text').hide();
 		}
 	}
 

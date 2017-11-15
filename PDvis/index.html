@@ -10,7 +10,11 @@
 		<link href="vis.css" rel="stylesheet">
 	</head>
 	<body>
-		<div class="container-fluid" style="padding-top: 20px;">									
+		<div style="padding-top: 20px; padding-left: 15px">
+			<button type="button" id="login" class="btn btn-default metric-button">Sign in to PagerDuty to get started</button>
+			<button type="button" id="logout" class="btn btn-default metric-button">Logout</button>
+		</div>
+		<div class="container-fluid" style="padding-top: 20px;" id="addon-content">
 			<div id="controls" class="row">
 				<div class="col-md-4">
 					Since: <input type="text" id="since"> Until: <input type="text" id="until">
@@ -79,7 +83,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		<script src="https://d3js.org/d3.v3.min.js"></script>
