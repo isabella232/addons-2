@@ -1,14 +1,14 @@
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-    results = regex.exec(location.search);
+        results = regex.exec(location.search);
     return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
 function getHashParameterByName(name, isHash) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
-    results = regex.exec(location.hash);
+        results = regex.exec(location.hash);
     return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
@@ -24,7 +24,7 @@ function getParametersByName(name) {
     if ( matches.length < 1 ) {
 	    return null;
     }
-
+    
     return matches.map(function(match) {
 	    return decodeURIComponent(match.replace(/\+/g, " "));
     });
@@ -81,7 +81,7 @@ function PDRequest(token, endpoint, method, options) {
 	var merged = $.extend(true, {}, {
 		type: method,
 		dataType: "json",
-		url: "http://api.pagerduty.com/" + endpoint,
+		url: "https://api.pagerduty.com/" + endpoint,
 		headers: {
 			"Authorization": "Bearer " + token,
 			"Accept": "application/vnd.pagerduty+json;version=2"
@@ -101,9 +101,9 @@ function PDRequest(token, endpoint, method, options) {
 
 			console.log(alertStr);
 
-      console.log("Attempting to get new OAuth token");
-      window.localStorage.removeItem('pdvisOAuthToken');
-      requestOAuthToken();
+			console.log("Attempting to get new OAuth token");
+			window.localStorage.removeItem('pdvisOAuthToken');
+			requestOAuthToken();
 		}
 	},
 	options);
