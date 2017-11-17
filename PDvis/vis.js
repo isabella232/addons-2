@@ -832,7 +832,6 @@ function main() {
 	$('#logout').click(function(e) {
 		removeOAuthToken();
 		$('#login').show();
-		$('#login-text').show();
 		$('#logout').hide();
 		$('#addon-content').hide();
 		$('.busy').hide();
@@ -853,9 +852,10 @@ function main() {
 			$('#addon-content').show();
 			$('#logout').show();
 			$('#login').hide();
-			$('#login-text').hide();
 		}
 	}
+
+	$('#login').hide();
 
 	$('#since').datepicker();
 	$('#until').datepicker();
