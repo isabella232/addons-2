@@ -5,6 +5,13 @@ function getParameterByName(name) {
     return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+function getHashParameterByName(name, isHash) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\#&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.hash);
+    return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 function getParametersByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var matches = [];
@@ -17,25 +24,71 @@ function getParametersByName(name) {
     if ( matches.length < 1 ) {
 	    return null;
     }
-    
+
     return matches.map(function(match) {
 	    return decodeURIComponent(match.replace(/\+/g, " "));
     });
 }
 
-function PDRequest(token, endpoint, method, options) {
+function generateRandomState(length) {
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var result = '';
 
-	if ( !token ) {
-		alert("Please put a token in the URL, like .../index.html?token=<YOUR_V2_API_TOKEN>");
-		return;
-	}
+  for (var i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  return result;
+
+}
+
+function requestOAuthToken() {
+  var state = generateRandomState(16);
+  window.localStorage.setItem('pdvisClientState', state);
+  var clientId = "b5236b4b54e5ec7b2b51cccc603174a2ac0b575f33753e04a2924dced669c03b";
+  var redirectUri = "https://pagerduty.github.io/addons/PDvis/index.html";
+  var oauthRoute = "http://app.pagerduty.com/oauth/authorize?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=token&state=" + state;
+  window.location.href = oauthRoute;
+}
+
+function getOAuthResponseParams() {
+  var oauthParams = {};
+  var token = getHashParameterByName('access_token');
+  if (token) oauthParams.token = token;
+  var state = getHashParameterByName('state');
+  if (state) oauthParams.state = state;
+
+  window.location.hash = '';
+
+  return oauthParams;
+}
+
+function receiveOAuthToken(oauthParams) {
+  var state = window.localStorage.getItem('pdvisClientState');
+  if (oauthParams.state !== state) {
+    alert("ERROR: OAuth failed due to bad state. Can't access PagerDuty API without OAuth");
+    return;
+  }
+  window.localStorage.setItem('pdvisOAuthToken', oauthParams.token);
+}
+
+function removeOAuthToken() {
+  window.localStorage.removeItem('pdvisOAuthToken');
+  window.localStorage.removeItem('pdvisClientState');
+}
+
+function getToken() {
+  return window.localStorage.getItem('pdvisOAuthToken');
+}
+
+function PDRequest(token, endpoint, method, options) {
 
 	var merged = $.extend(true, {}, {
 		type: method,
 		dataType: "json",
 		url: "https://api.pagerduty.com/" + endpoint,
 		headers: {
-			"Authorization": "Token token=" + token,
+			"Authorization": "Bearer " + token,
 			"Accept": "application/vnd.pagerduty+json;version=2"
 		},
 		error: function(err, textStatus) {
@@ -46,12 +99,16 @@ function PDRequest(token, endpoint, method, options) {
 			} catch (e) {
 				alertStr += ".";
 			}
-			
+
 			try {
 				alertStr += "\n\n" + err.responseJSON.error.errors.join("\n");
 			} catch (e) {}
 
 			console.log(alertStr);
+
+			console.log("Attempting to get new OAuth token");
+			removeOAuthToken();
+			requestOAuthToken();
 		}
 	},
 	options);
@@ -62,7 +119,7 @@ function PDRequest(token, endpoint, method, options) {
 function hourNumberToString(n, long) {
 	var m = (n > 12) ? "p" : "a";
 	var h = (n % 12 == 0) ? 12 : n % 12;
-	
+
 	if (long) { return h + ":00" + m + "m"; }
 	else { return h + m }
 }
@@ -70,7 +127,7 @@ function hourNumberToString(n, long) {
 function dayNumberToString(n, long) {
 	var dayNamesShort = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 	var dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-	
+
 	if (long) { return dayNames[n]; }
 	else { return dayNamesShort[n]; }
 }
@@ -111,7 +168,7 @@ function fetch(endpoint, params, callback, progressCallback) {
 								callback(null, data);
 							}
 						}
-						PDRequest(getParameterByName('token'), endpoint, "GET", options);
+						PDRequest(getToken(), endpoint, "GET", options);
 					});
 				});
 
@@ -123,7 +180,7 @@ function fetch(endpoint, params, callback, progressCallback) {
 			}
 		}
 	}
-	PDRequest(getParameterByName('token'), endpoint, "GET", options);
+	PDRequest(getToken(), endpoint, "GET", options);
 }
 
 function fetchLogEntries(since, until, callback, progressCallback) {
