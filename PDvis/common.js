@@ -45,9 +45,9 @@ function generateRandomState(length) {
 function requestOAuthToken() {
   var state = generateRandomState(16);
   window.localStorage.setItem('pdvisClientState', state);
-  var clientId = "b5236b4b54e5ec7b2b51cccc603174a2ac0b575f33753e04a2924dced669c03b";
+  var clientId = "309e47d2fb081868b34ce61295b19177e1bbdbcbc8ebb7c216d46f0cd3ece7ac";
   var redirectUri = "https://pagerduty.github.io/addons/PDvis/index.html";
-  var oauthRoute = "http://app.pagerduty.com/oauth/authorize?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=token&state=" + state;
+  var oauthRoute = "https://app.pagerduty.com/oauth/authorize?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=token&state=" + state;
   window.location.href = oauthRoute;
 }
 
