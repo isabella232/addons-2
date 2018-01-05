@@ -194,6 +194,7 @@ function getCalendarFeedURL(calendarID) {
 }
 
 function showCalendar(url) {
+
 	$('#cal').html('<div id="cal-title"></div><div id="cal-view"></div>');
 	$('.busy').show();
 	url = "https://cors-anywhere.herokuapp.com/" + url;
@@ -207,15 +208,15 @@ function showCalendar(url) {
 		},
 		success: function(data) {
 			$('.busy').hide();
+
 			var jcalData = ICAL.parse(data);
 			var comp = new ICAL.Component(jcalData);
-			
 			var calName = comp.getFirstProperty("x-wr-calname").getFirstValue();
-			$('#cal-title').html('<h2>' + calName + '</h2><br>');
-			
 			var vevents = comp.getAllSubcomponents("vevent");
+
 			var events = [];
 			var peopleColors = {};
+
 			vevents.forEach(function(vevent) {
 				var event = new ICAL.Event(vevent);
 				var title = event.summary.replace(/^On Call - /g, '');
@@ -223,14 +224,21 @@ function showCalendar(url) {
 				if ( ! peopleColors[title] ) {
 					peopleColors[title] = colors[Math.floor(Math.random() * colors.length)];
 				}
+
+				var startdate = new Date(event.startDate.toUnixTime() * 1000);
+				var enddate = new Date(event.endDate.toUnixTime() * 1000);
+
 				events.push({
 					title: title,
-					start: (new ICAL.Time(event.startDate)).toString(),
-					end: (new ICAL.Time(event.endDate)).toString(),
+					start: startdate,
+					end: enddate,
 					color: peopleColors[title],
 					weburl: event._firstProp("attendee")
 				});
 			});
+
+			var headline = `<h2 style="background-color: #f0f0f0">${calName}</h2>`;
+			$('#cal-title').html(headline);
 
 			$('#cal-view').fullCalendar({
 				events: events,
