@@ -148,7 +148,13 @@ var PDtoolevents = {
          "client_url" : "https://rpm.newrelic.com/accounts/1218847/incidents/17615637",
          "event_type" : "trigger",
          "incident_key" : "/Alert/1218847/17615637/13317445",
-         "client" : "New Relic"
+         "client" : "New Relic",
+         "details": {
+            "ConfigurationItem": "ACME ENET",
+            "AlertMessage": "Email dispatch delay from AM-FLOR-APVM012 server. Delay: 870 secs",
+            "CI": "ACME ENET",
+            "Priority": "2 - High"
+         }
       }
    },
    "Zabbix" : {
@@ -182,7 +188,7 @@ var PDtoolevents = {
          "details" : {
             "pd_nagios_object" : "service",
             "SERVICEDESC" : "Memory",
-            "HOSTNAME" : "prodWest",
+            "HOSTNAME" : "prodwest.acme.com",
             "CONTACTPAGER" : "1111111",
             "SERVICEOUTPUT" : "java.lang.OutOfMemoryError: Java heap space",
             "SERVICESTATE" : "WARNING"
@@ -201,7 +207,7 @@ var PDtoolevents = {
                "subscriptions" : [
                   "test"
                ],
-               "address" : "localhost",
+               "address" : "app04.acme.com",
                "version" : "0.21.0"
             },
             "occurrences" : 180,
