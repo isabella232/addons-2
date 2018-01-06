@@ -38,9 +38,16 @@ function visualize(data, metric, since, until, includeLowUrgency) {
 		var weekOf = c.weekday(0).format('L');
 		var weekOfLong = c.weekday(0).format('LL');
 
-		weekly[a.year() + "-" + a.week()]  = {
+		var year = a.year();
+		var yearAtEndOfWeek = a.weekday(6).year();
+
+		if(year < yearAtEndOfWeek) {
+			year = yearAtEndOfWeek;
+		}
+
+		weekly[year + "-" + a.week()]  = {
 			week: a.week(),
-			year: a.year(),
+			year: year,
 			weekOf: weekOf,
 			weekOfLong: weekOfLong,
 			count: 0,
